@@ -1,4 +1,4 @@
-package com.example.responsive_starter_app
+package com.example.riding_app
 
 import io.flutter.embedding.android.FlutterActivity
 

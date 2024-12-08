@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:responsive_starter_app/about.dart';
-import 'package:responsive_starter_app/main.dart';
+import 'package:riding_app/views/home.dart';
+import 'package:riding_app/views/about.dart';
 
 class RouterClass {
   static Route<dynamic> generateRoute(RouteSettings settings) {
