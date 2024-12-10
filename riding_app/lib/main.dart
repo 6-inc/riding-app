@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
-import 'app.dart';
+import 'views/home.dart';
+import 'router.dart';
 import 'models/app_state_model.dart';
 
 void main() {
@@ -22,4 +23,20 @@ void main() {
       ),
     );
   });
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      theme: ThemeData(
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(),
+      initialRoute: '/',
+      onGenerateRoute: RouterClass.generateRoute,
+    );
+  }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import '../widget/grid_lines.dart';
+import 'package:riding_app/views/journal/journal_list_page.dart';
+import 'package:riding_app/widget/app_bar.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -10,6 +12,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageWidgetState extends State<MyHomePage> {
+  int _selectedIndex = 0;
+
   @override
   void initState() {
     super.initState();
@@ -27,13 +31,16 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
     FlutterNativeSplash.remove();
   }
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('ホーム'),
-      ),
-      body: SingleChildScrollView(
+    List<Widget> _pages = <Widget>[
+      SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -47,6 +54,27 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
             ],
           ),
         ),
+      ),
+      JournalListPage(),
+    ];
+
+    return Scaffold(
+      appBar: CustomAppBar(title: _selectedIndex == 0 ? 'ホーム' : '記録'),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'ホーム',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.edit),
+            label: '記録',
+            backgroundColor: Colors.blue,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }
