@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
+import 'theme.dart';
 import 'views/home.dart';
 import 'router.dart';
 import 'models/app_state_model.dart';
@@ -33,7 +34,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         useMaterial3: true,
+        colorScheme: MaterialTheme.lightScheme().toColorScheme(),
       ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: MaterialTheme.darkScheme().toColorScheme(),
+      ),
+      themeMode: ThemeMode.system,
       home: const MyHomePage(),
       initialRoute: '/',
       onGenerateRoute: RouterClass.generateRoute,
