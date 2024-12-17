@@ -6,6 +6,7 @@ import 'theme.dart';
 import 'views/home.dart';
 import 'router.dart';
 import 'models/app_state_model.dart';
+import 'services/journal_service.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -19,6 +20,7 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => AppState()),
+          ChangeNotifierProvider(create: (context) => JournalService()),
         ],
         child: const MyApp(),
       ),
