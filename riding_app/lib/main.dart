@@ -7,6 +7,7 @@ import 'views/home.dart';
 import 'router.dart';
 import 'models/app_state_model.dart';
 import 'services/journal_service.dart';
+import 'services/horse_service.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -16,11 +17,13 @@ void main() {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]).then((value) {
+    FlutterNativeSplash.remove();
     runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (context) => AppState()),
           ChangeNotifierProvider(create: (context) => JournalService()),
+          ChangeNotifierProvider(create: (context) => HorseService()),
         ],
         child: const MyApp(),
       ),

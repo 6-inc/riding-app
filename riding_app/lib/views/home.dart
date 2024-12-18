@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import '../widget/grid_lines.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:riding_app/widget/grid_lines.dart';
 import 'package:riding_app/views/journal/journal_list_page.dart';
 import 'package:riding_app/widget/app_bar.dart';
+import 'package:riding_app/views/horse/horse_list_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -56,10 +58,16 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
         ),
       ),
       JournalListPage(),
+      HorseListPage(),
     ];
 
     return Scaffold(
-      appBar: CustomAppBar(title: _selectedIndex == 0 ? 'ホーム' : '記録'),
+      appBar: CustomAppBar(
+          title: _selectedIndex == 0
+              ? 'ホーム'
+              : _selectedIndex == 1
+                  ? '記録'
+                  : '馬'),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -71,6 +79,10 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
             icon: Icon(Icons.edit),
             label: '記録',
             backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.horseHead),
+            label: '馬',
           ),
         ],
         currentIndex: _selectedIndex,
