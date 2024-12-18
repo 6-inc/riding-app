@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:riding_app/services/journal_service.dart';
 
 class JournalEntryPage extends StatefulWidget {
   final String location;
@@ -35,7 +37,7 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildEditableField('スタイル', widget.style, () {
-              // スタイル変更の処理を追加
+              // スタイルの処理を追加
             }),
             _buildEditableField('馬', widget.horse, () {
               // 馬変更の処理を追加
@@ -59,12 +61,17 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                widget.onSave(
+                // JournalServiceを使用してエントリーを追加
+                Provider.of<JournalService>(context, listen: false).addEntry(
                   _titleController.text,
                   _contentController.text,
+                  widget.style,
+                  widget.horse,
+                  widget.location,
+                  widget.startTime,
+                  widget.endTime,
                 );
-                Navigator.pop(context);
-                Navigator.pushReplacementNamed(context, '/');
+                Navigator.popUntil(context, ModalRoute.withName('/'));
               },
               child: Text('保存'),
             ),

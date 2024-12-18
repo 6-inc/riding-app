@@ -14,7 +14,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageWidgetState extends State<MyHomePage> {
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   @override
   void initState() {

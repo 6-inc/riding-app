@@ -11,10 +11,14 @@ class JournalListPage extends StatelessWidget {
     return Scaffold(
       body: Consumer<JournalService>(
         builder: (context, journalService, child) {
+          final entries = journalService.getEntries();
+          if (entries.isEmpty) {
+            return Center(child: Text('記録がありません'));
+          }
           return ListView.builder(
-            itemCount: journalService.getEntries().length,
+            itemCount: entries.length,
             itemBuilder: (context, index) {
-              final entry = journalService.getEntries()[index];
+              final entry = entries[index];
               return ListTile(
                 title: Text(entry.title),
                 onTap: () {
@@ -40,8 +44,7 @@ class JournalListPage extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          JournalAddPage(selectedStyle: style),
+                      builder: (context) => JournalAddPage(),
                     ),
                   );
                 },

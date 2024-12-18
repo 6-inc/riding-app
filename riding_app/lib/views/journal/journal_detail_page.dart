@@ -20,7 +20,12 @@ class JournalDetailPage extends StatelessWidget {
               entry.title,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            // 他の詳細情報をここに追加
+            if (entry.content != null) Text(entry.content!),
+            if (entry.style != null) Text('スタイル: ${entry.style}'),
+            if (entry.horse != null) Text('馬: ${entry.horse}'),
+            if (entry.location != null) Text('場所: ${entry.location}'),
+            if (entry.startTime != null) Text('開始時間: ${entry.startTime}'),
+            if (entry.endTime != null) Text('終了時間: ${entry.endTime}'),
           ],
         ),
       ),
