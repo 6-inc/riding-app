@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_timer_page.dart';
 import 'package:riding_app/views/journal/journal_location_page.dart';
+import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 
 class JournalStyleSelectionPage extends StatelessWidget {
   final Function(String) onStyleSelected;
@@ -41,7 +42,17 @@ class JournalStyleSelectionPage extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => JournalLocationPage(
                             onLocationSelected: (location) {
-                              // ロケーション選択後の処理を追加
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      JournalHorseSelectionPage(
+                                    onHorseSelected: (horse) {
+                                      // スタイル名を渡す
+                                    },
+                                  ),
+                                ),
+                              );
                             },
                           ),
                         ),

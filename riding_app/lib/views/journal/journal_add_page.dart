@@ -44,7 +44,7 @@ class JournalAddPage extends StatelessWidget {
                                     .addEntry(
                                   _titleController.text,
                                   _contentController.text,
-                                  style,
+                                  style, // 選択したスタイルを保存
                                   '馬', // 馬を適切に設定
                                   location, // 選択した場所を設定
                                   DateTime.now(), // 開始時間を適切に設定

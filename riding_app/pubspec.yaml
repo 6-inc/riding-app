@@ -40,6 +40,8 @@ dependencies:
     device_info_plus: ^10.1.0
     provider: ^6.0.5
     font_awesome_flutter: ^10.6.0
+    sqflite: ^2.4.1
+path_provider: ^2.1.5
 dev_dependencies:
     flutter_test:
         sdk: flutter
@@ -261,5 +263,3 @@ flutter_launcher_icons:
     # macos:
     #     generate: true
     #     image_path: "assets/images/ios/AppIcon-40@2x.png"
-
-font_awesome_flutter: ^10.8.0
