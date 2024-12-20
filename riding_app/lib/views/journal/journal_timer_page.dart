@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:riding_app/views/journal/journal_location_page.dart'; // ロケーション選択画面のインポート
+import 'package:riding_app/views/journal/journal_location_page.dart';
 
 class JournalTimerPage extends StatefulWidget {
   final Function(DateTime, DateTime) onTimeSelected;
@@ -101,7 +101,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '開始時間: ${startTime.toString()}',
+                    '開始時間: ${startTime?.toLocal().toString() ?? '未設定'}',
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
@@ -115,7 +115,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '終了時間: ${endTime.toString()}',
+                    '終了時間: ${endTime?.toLocal().toString() ?? '未設定'}',
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
