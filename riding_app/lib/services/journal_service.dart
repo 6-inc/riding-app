@@ -21,4 +21,9 @@ class JournalService extends ChangeNotifier {
   List<JournalEntry> getEntries() {
     return _entries;
   }
+
+  void saveJournalEntry(JournalEntry entry) {
+    // スタイル情報を含めてエントリーを保存する処理を追加
+    // 例: データベースやAPIに保存するコード
+  }
 }

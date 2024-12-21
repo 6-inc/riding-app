@@ -29,13 +29,15 @@ class JournalStyleSelectionPage extends StatelessWidget {
           return ListTile(
             title: Text(styles[index]),
             onTap: () {
-              onStyleSelected(styles[index]);
+              final selectedStyle = styles[index];
+              onStyleSelected(selectedStyle);
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => JournalTimerPage(
+                    style: selectedStyle,
                     onTimeSelected: (start, end) {
-                      // 保存
+                      // 時間選択後の処理
                     },
                   ),
                 ),

@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/models/journal_entry.dart';
-import 'package:riding_app/widget/app_bar.dart';
 
 class JournalDetailPage extends StatelessWidget {
   final JournalEntry entry;
 
-  const JournalDetailPage({super.key, required this.entry});
+  JournalDetailPage({required this.entry});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: entry.title),
+      appBar: AppBar(title: Text('エントリー詳細')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              entry.title,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            if (entry.content != null) Text(entry.content!),
-            if (entry.style != null) Text('スタイル: ${entry.style}'),
-            if (entry.horse != null) Text('馬: ${entry.horse}'),
-            if (entry.location != null) Text('場所: ${entry.location}'),
-            if (entry.startTime != null) Text('開始時間: ${entry.startTime}'),
-            if (entry.endTime != null) Text('終了時間: ${entry.endTime}'),
+            Text('スタイル: ${entry.style}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('タイトル: ${entry.title}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('内容: ${entry.content}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('開始時間: ${entry.startTime}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('終了時間: ${entry.endTime}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('場所: ${entry.location}', style: TextStyle(fontSize: 18)),
+            SizedBox(height: 8),
+            Text('馬: ${entry.horse}', style: TextStyle(fontSize: 18)),
           ],
         ),
       ),

@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:riding_app/views/journal/journal_location_page.dart';
+import 'package:intl/intl.dart';
 
 class JournalTimerPage extends StatefulWidget {
+  final String style;
   final Function(DateTime, DateTime) onTimeSelected;
 
-  JournalTimerPage({required this.onTimeSelected});
+  JournalTimerPage({
+    required this.style,
+    required this.onTimeSelected,
+  });
 
   @override
   _JournalTimerPageState createState() => _JournalTimerPageState();
@@ -93,7 +98,11 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              '${elapsedTime.inHours.toString().padLeft(2, '0')}:${(elapsedTime.inMinutes % 60).toString().padLeft(2, '0')}:${(elapsedTime.inSeconds % 60).toString().padLeft(2, '0')}',
+              'スタイル: ${widget.style}',
+              style: TextStyle(fontSize: 18),
+            ),
+            Text(
+              _formatElapsedTime(elapsedTime),
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             if (startTime != null)
@@ -101,7 +110,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '開始時間: ${startTime?.toLocal().toString() ?? '未設定'}',
+                    '開始時間: ${_formatDateTime(startTime!)}',
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
@@ -115,7 +124,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '終了時間: ${endTime?.toLocal().toString() ?? '未設定'}',
+                    '終了時間: ${_formatDateTime(endTime!)}',
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
@@ -137,8 +146,11 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => JournalLocationPage(
+                        style: widget.style,
+                        startTime: startTime!,
+                        endTime: endTime!,
                         onLocationSelected: (location) {
-                          // ロケーション選択後の処理を追加
+                          // ロケーション選択後の処理
                         },
                       ),
                     ),
@@ -150,5 +162,16 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
         ),
       ),
     );
+  }
+
+  String _formatElapsedTime(Duration elapsedTime) {
+    final hours = elapsedTime.inHours.toString().padLeft(2, '0');
+    final minutes = (elapsedTime.inMinutes % 60).toString().padLeft(2, '0');
+    final seconds = (elapsedTime.inSeconds % 60).toString().padLeft(2, '0');
+    return '$hours:$minutes:$seconds';
+  }
+
+  String _formatDateTime(DateTime dateTime) {
+    return DateFormat('yyyy年MM月dd日HH時mm分ss秒').format(dateTime);
   }
 }

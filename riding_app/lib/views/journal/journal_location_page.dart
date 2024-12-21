@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
+import 'package:riding_app/models/journal_entry.dart';
+import 'package:riding_app/services/journal_service.dart';
 
 class JournalLocationPage extends StatelessWidget {
+  final String style;
+  final DateTime startTime;
+  final DateTime endTime;
   final Function(String) onLocationSelected;
 
-  JournalLocationPage({required this.onLocationSelected});
+  JournalLocationPage({
+    required this.style,
+    required this.startTime,
+    required this.endTime,
+    required this.onLocationSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -12,10 +22,26 @@ class JournalLocationPage extends StatelessWidget {
 
     void _navigateToHorseSelection(String location) {
       onLocationSelected(location);
+      final journalEntry = JournalEntry(
+        title: 'Your Title Here',
+        content: 'Your Content Here',
+        style: style,
+        startTime: startTime,
+        endTime: endTime,
+        location: location,
+        horse: '', // 馬の情報は後で追加
+      );
+
+      // JournalServiceを使ってエントリーを保存
+      final journalService = JournalService();
+      journalService.saveJournalEntry(journalEntry);
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => JournalHorseSelectionPage(
+            location: location,
+            style: style,
             onHorseSelected: (horse) {
               // 馬の選択後の処理を追加
             },

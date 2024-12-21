@@ -5,9 +5,14 @@ import 'package:riding_app/views/journal/journal_entry_page.dart';
 import 'package:riding_app/views/horse/horse_add_page.dart';
 
 class JournalHorseSelectionPage extends StatelessWidget {
+  final String location;
+  final String style;
   final Function(String) onHorseSelected;
 
-  JournalHorseSelectionPage({required this.onHorseSelected});
+  JournalHorseSelectionPage(
+      {required this.location,
+      required this.style,
+      required this.onHorseSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +32,9 @@ class JournalHorseSelectionPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => JournalEntryPage(
-                        location: 'Selected Location',
+                        location: location,
                         horse: horse.name,
-                        style: 'Selected Style',
+                        style: style,
                         startTime: DateTime.now(),
                         endTime: DateTime.now(),
                         onSave: (title, content) {
