@@ -35,6 +35,7 @@ class JournalListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // 新しいエントリーを追加するためのページに遷移
           Navigator.push(
             context,
             MaterialPageRoute(

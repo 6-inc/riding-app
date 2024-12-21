@@ -19,8 +19,9 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'riding_app.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -42,6 +43,23 @@ class DatabaseHelper {
         FOREIGN KEY (horseId) REFERENCES horses (id)
       )
     ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE journal_entries (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          content TEXT,
+          style TEXT,
+          startTime TEXT,
+          endTime TEXT,
+          location TEXT,
+          horse TEXT
+        )
+      ''');
+    }
   }
 
   Future<int> insertHorse(Map<String, dynamic> horse) async {
@@ -68,6 +86,35 @@ class DatabaseHelper {
     final db = await database;
     return await db.delete(
       'horses',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> insertJournalEntry(Map<String, dynamic> entry) async {
+    final db = await database;
+    return await db.insert('journal_entries', entry);
+  }
+
+  Future<List<Map<String, dynamic>>> getJournalEntries() async {
+    final db = await database;
+    return await db.query('journal_entries');
+  }
+
+  Future<int> updateJournalEntry(Map<String, dynamic> entry) async {
+    final db = await database;
+    return await db.update(
+      'journal_entries',
+      entry,
+      where: 'id = ?',
+      whereArgs: [entry['id']],
+    );
+  }
+
+  Future<int> deleteJournalEntry(int id) async {
+    final db = await database;
+    return await db.delete(
+      'journal_entries',
       where: 'id = ?',
       whereArgs: [id],
     );

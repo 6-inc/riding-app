@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 import 'package:riding_app/models/journal_entry.dart';
 import 'package:riding_app/services/journal_service.dart';
+import 'package:provider/provider.dart';
 
 class JournalLocationPage extends StatelessWidget {
   final String style;
@@ -33,8 +34,17 @@ class JournalLocationPage extends StatelessWidget {
       );
 
       // JournalServiceを使ってエントリーを保存
-      final journalService = JournalService();
-      journalService.saveJournalEntry(journalEntry);
+      final journalService =
+          Provider.of<JournalService>(context, listen: false);
+      journalService.addEntry(
+        journalEntry.title,
+        journalEntry.content,
+        journalEntry.style,
+        journalEntry.horse,
+        journalEntry.location,
+        journalEntry.startTime,
+        journalEntry.endTime,
+      );
 
       Navigator.push(
         context,
