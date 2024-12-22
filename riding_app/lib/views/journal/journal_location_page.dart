@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
-import 'package:riding_app/models/journal_entry.dart';
-import 'package:riding_app/services/journal_service.dart';
-import 'package:provider/provider.dart';
 
 class JournalLocationPage extends StatelessWidget {
   final String style;
@@ -23,16 +20,6 @@ class JournalLocationPage extends StatelessWidget {
 
     void _navigateToHorseSelection(String location) {
       onLocationSelected(location);
-      final journalEntry = JournalEntry(
-        title: 'Your Title Here',
-        content: 'Your Content Here',
-        style: style,
-        startTime: startTime,
-        endTime: endTime,
-        location: location,
-        horse: '', // 馬の情報は後で追加
-      );
-
       Navigator.push(
         context,
         MaterialPageRoute(

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:riding_app/services/journal_service.dart';
 import 'package:riding_app/views/journal/journal_detail_page.dart';
 import 'package:riding_app/views/journal/journal_style_selection_page.dart';
-import 'package:riding_app/models/journal_entry.dart';
 
 class JournalListPage extends StatelessWidget {
   @override
