@@ -43,4 +43,13 @@ class JournalService extends ChangeNotifier {
   List<JournalEntry> getEntries() {
     return _entries;
   }
+
+  Future<void> resetEntries() async {
+    _entries.clear();
+    notifyListeners();
+  }
+
+  Future<void> reloadEntries() async {
+    await _loadEntriesFromDatabase();
+  }
 }

@@ -142,6 +142,6 @@ class DatabaseHelper {
   Future<void> resetDatabase() async {
     String path = join(await getDatabasesPath(), 'riding_app.db');
     await deleteDatabase(path);
-    _database = null; // データベースインスタンスをリセット
+    _database = null;
   }
 }

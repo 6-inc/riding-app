@@ -7,6 +7,8 @@ import 'package:riding_app/widget/grid_lines.dart';
 import 'package:riding_app/views/journal/journal_list_page.dart';
 import 'package:riding_app/widget/app_bar.dart';
 import 'package:riding_app/views/horse/horse_list_page.dart';
+import 'package:riding_app/services/horse_service.dart';
+import 'package:riding_app/services/journal_service.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -59,6 +61,14 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
                 onPressed: () async {
                   await Provider.of<DatabaseHelper>(context, listen: false)
                       .resetDatabase();
+                  await Provider.of<HorseService>(context, listen: false)
+                      .resetHorses();
+                  await Provider.of<JournalService>(context, listen: false)
+                      .resetEntries();
+                  await Provider.of<HorseService>(context, listen: false)
+                      .reloadHorses();
+                  await Provider.of<JournalService>(context, listen: false)
+                      .reloadEntries();
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('データベースがリセットされました。')),
                   );

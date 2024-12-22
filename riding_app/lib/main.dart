@@ -8,6 +8,7 @@ import 'package:riding_app/router.dart';
 import 'package:riding_app/models/app_state_model.dart';
 import 'package:riding_app/services/journal_service.dart';
 import 'package:riding_app/services/horse_service.dart';
+import 'package:riding_app/database_helper.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -24,6 +25,7 @@ void main() {
           ChangeNotifierProvider(create: (context) => AppState()),
           ChangeNotifierProvider(create: (context) => JournalService()),
           ChangeNotifierProvider(create: (context) => HorseService()),
+          Provider(create: (context) => DatabaseHelper()),
         ],
         child: const MyApp(),
       ),
