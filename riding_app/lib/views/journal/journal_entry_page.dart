@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:riding_app/services/journal_service.dart';
 import 'package:intl/intl.dart';
+import 'package:riding_app/models/journal_entry.dart';
 
 class JournalEntryPage extends StatefulWidget {
   final String location;
@@ -99,15 +100,17 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
               ElevatedButton(
                 onPressed: () {
                   // 5. 保存ボタン押下時に、State にある最新値を addEntry に渡す
-                  Provider.of<JournalService>(context, listen: false).addEntry(
-                    _titleController.text,
-                    _contentController.text,
-                    _style,
-                    _horse,
-                    _location,
-                    _startTime,
-                    _endTime,
+                  final newEntry = JournalEntry(
+                    title: _titleController.text,
+                    content: _contentController.text,
+                    style: _style,
+                    horse: _horse,
+                    location: _location,
+                    startTime: _startTime,
+                    endTime: _endTime,
                   );
+                  Provider.of<JournalService>(context, listen: false)
+                      .addEntry(newEntry);
 
                   // 必要があれば、onSave コールバックを呼び出す
                   // widget.onSave(_titleController.text, _contentController.text);

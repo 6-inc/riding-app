@@ -26,32 +26,16 @@ class JournalService extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addEntry(
-      String title,
-      String content,
-      String style,
-      String horse,
-      String location,
-      DateTime startTime,
-      DateTime endTime) async {
-    final entry = JournalEntry(
-      title: title,
-      content: content,
-      style: style,
-      horse: horse,
-      location: location,
-      startTime: startTime,
-      endTime: endTime,
-    );
+  Future<void> addEntry(JournalEntry entry) async {
     _entries.add(entry);
     await _dbHelper.insertJournalEntry({
-      'title': title,
-      'content': content,
-      'style': style,
-      'horse': horse,
-      'location': location,
-      'startTime': startTime.toIso8601String(),
-      'endTime': endTime.toIso8601String(),
+      'title': entry.title,
+      'content': entry.content,
+      'style': entry.style,
+      'horse': entry.horse,
+      'location': entry.location,
+      'startTime': entry.startTime.toIso8601String(),
+      'endTime': entry.endTime.toIso8601String(),
     });
     notifyListeners();
   }

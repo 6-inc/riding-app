@@ -33,19 +33,6 @@ class JournalLocationPage extends StatelessWidget {
         horse: '', // 馬の情報は後で追加
       );
 
-      // JournalServiceを使ってエントリーを保存
-      final journalService =
-          Provider.of<JournalService>(context, listen: false);
-      journalService.addEntry(
-        journalEntry.title,
-        journalEntry.content,
-        journalEntry.style,
-        journalEntry.horse,
-        journalEntry.location,
-        journalEntry.startTime,
-        journalEntry.endTime,
-      );
-
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -74,7 +61,7 @@ class JournalLocationPage extends StatelessWidget {
               onPressed: () {
                 _navigateToHorseSelection(_locationController.text);
               },
-              child: Text('保存'),
+              child: Text('次へ'),
             ),
             ElevatedButton(
               onPressed: () {
