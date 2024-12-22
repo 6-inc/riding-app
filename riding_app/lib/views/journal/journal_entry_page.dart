@@ -104,10 +104,12 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
                     title: _titleController.text,
                     content: _contentController.text,
                     style: _style,
-                    horse: _horse,
-                    location: _location,
+                    startDate: _startTime,
                     startTime: _startTime,
+                    endDate: _endTime,
                     endTime: _endTime,
+                    location: _location,
+                    horse: _horse,
                   );
                   Provider.of<JournalService>(context, listen: false)
                       .addEntry(newEntry);
@@ -151,7 +153,7 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   // 以下、各種編集
   // ------------------------
 
-  /// スタイルを編集する例
+  /// スタイ��を編集する例
   void _editStyle() async {
     final newStyle = await showDialog<String>(
       context: context,

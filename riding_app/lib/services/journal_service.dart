@@ -17,7 +17,9 @@ class JournalService extends ChangeNotifier {
               title: map['title'],
               content: map['content'],
               style: map['style'],
+              startDate: DateTime.parse(map['startDate']),
               startTime: DateTime.parse(map['startTime']),
+              endDate: DateTime.parse(map['endDate']),
               endTime: DateTime.parse(map['endTime']),
               location: map['location'],
               horse: map['horse'],
@@ -32,10 +34,12 @@ class JournalService extends ChangeNotifier {
       'title': entry.title,
       'content': entry.content,
       'style': entry.style,
-      'horse': entry.horse,
-      'location': entry.location,
+      'startDate': entry.startDate.toIso8601String(),
       'startTime': entry.startTime.toIso8601String(),
+      'endDate': entry.endDate.toIso8601String(),
       'endTime': entry.endTime.toIso8601String(),
+      'location': entry.location,
+      'horse': entry.horse,
     });
     notifyListeners();
   }

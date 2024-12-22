@@ -21,11 +21,14 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
   DateTime? endTime;
   Duration elapsedTime = Duration.zero;
   Timer? timer;
+  DateTime? startDate;
+  DateTime? endDate;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
+    startDate = DateTime.now();
   }
 
   void _startTimer() {
@@ -46,7 +49,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
     });
   }
 
-  Future<void> _selectDateTime(BuildContext context, bool isStartTime) async {
+  void _selectDateTime(BuildContext context, bool isStartTime) async {
     final initialDateTime = isStartTime ? startTime : endTime;
     final pickedDate = await showDatePicker(
       context: context,
@@ -74,12 +77,29 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
           );
 
           if (isStartTime) {
+            startDate = pickedDate;
             startTime = selectedDateTime;
           } else {
+            endDate = pickedDate;
             endTime = selectedDateTime;
           }
         });
       }
+    }
+  }
+
+  void _selectDate(BuildContext context) async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: startDate ?? DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null) {
+      setState(() {
+        startDate = pickedDate;
+      });
     }
   }
 
@@ -98,8 +118,21 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'スタイル: ${widget.style}',
+              widget.style,
               style: TextStyle(fontSize: 18),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  '日付: ${_formatDate(startDate!)}',
+                  style: TextStyle(fontSize: 18),
+                ),
+                IconButton(
+                  icon: Icon(Icons.edit, color: Colors.blue),
+                  onPressed: () => _selectDate(context),
+                ),
+              ],
             ),
             Text(
               _formatElapsedTime(elapsedTime),
@@ -110,7 +143,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '開始時間: ${_formatDateTime(startTime!)}',
+                    '開始時間: ${_formatTime(startTime!)}',
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
@@ -124,7 +157,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    '終了時間: ${_formatDateTime(endTime!)}',
+                    '終了時間: ${_formatTime(endTime!)}',
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
@@ -171,7 +204,11 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
     return '$hours:$minutes:$seconds';
   }
 
-  String _formatDateTime(DateTime dateTime) {
-    return DateFormat('yyyy年MM月dd日HH時mm分ss秒').format(dateTime);
+  String _formatTime(DateTime dateTime) {
+    return DateFormat('HH:mm').format(dateTime);
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('yyyy年MM月dd日').format(date);
   }
 }

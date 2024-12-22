@@ -51,7 +51,9 @@ class DatabaseHelper {
         title TEXT,
         content TEXT,
         style TEXT,
+        startDate TEXT,
         startTime TEXT,
+        endDate TEXT,
         endTime TEXT,
         location TEXT,
         horse TEXT
@@ -77,6 +79,14 @@ class DatabaseHelper {
           location TEXT,
           horse TEXT
         )
+      ''');
+    }
+    if (oldVersion < 4) {
+      await db.execute('''
+        ALTER TABLE journal_entries ADD COLUMN startDate TEXT
+      ''');
+      await db.execute('''
+        ALTER TABLE journal_entries ADD COLUMN endDate TEXT
       ''');
     }
   }
