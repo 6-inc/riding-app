@@ -10,10 +10,16 @@ class HorseListPage extends StatelessWidget {
     return Scaffold(
       body: Consumer<HorseService>(
         builder: (context, horseService, child) {
+          final horses = horseService.getHorses();
+          if (horses.isEmpty) {
+            return Center(
+              child: Text('馬が登録されていません。'),
+            );
+          }
           return ListView.builder(
-            itemCount: horseService.getHorses().length,
+            itemCount: horses.length,
             itemBuilder: (context, index) {
-              final horse = horseService.getHorses()[index];
+              final horse = horses[index];
               return ListTile(
                 title: Text(horse.name),
                 onTap: () {
