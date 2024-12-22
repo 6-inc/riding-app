@@ -18,16 +18,21 @@ class JournalListPage extends StatelessWidget {
             itemCount: entries.length,
             itemBuilder: (context, index) {
               final entry = entries[index];
-              return ListTile(
-                title: Text(entry.title),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JournalDetailPage(entry: entry),
-                    ),
-                  );
-                },
+              return Card(
+                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                child: ListTile(
+                  title: Text(entry.title,
+                      style: TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text('スタイル: ${entry.style}'),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => JournalDetailPage(entry: entry),
+                      ),
+                    );
+                  },
+                ),
               );
             },
           );

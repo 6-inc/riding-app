@@ -16,20 +16,33 @@ class HorseListPage extends StatelessWidget {
               child: Text('馬が登録されていません。'),
             );
           }
-          return ListView.builder(
+          return GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 3,
+            ),
             itemCount: horses.length,
             itemBuilder: (context, index) {
               final horse = horses[index];
-              return ListTile(
-                title: Text(horse.name),
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => HorseDetailPage(horse: horse),
+              return Card(
+                margin: EdgeInsets.all(8.0),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => HorseDetailPage(horse: horse),
+                      ),
+                    );
+                  },
+                  child: Center(
+                    child: Text(
+                      horse.name,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      textAlign: TextAlign.center,
                     ),
-                  );
-                },
+                  ),
+                ),
               );
             },
           );
