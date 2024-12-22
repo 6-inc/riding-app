@@ -17,88 +17,73 @@ class JournalTimerPage extends StatefulWidget {
 }
 
 class _JournalTimerPageState extends State<JournalTimerPage> {
-  DateTime? startTime;
-  DateTime? endTime;
+  TimeOfDay? startTime;
+  TimeOfDay? endTime;
+  String? startDate;
+  String? endDate;
   Duration elapsedTime = Duration.zero;
   Timer? timer;
-  DateTime? startDate;
-  DateTime? endDate;
 
   @override
   void initState() {
     super.initState();
     _startTimer();
-    startDate = DateTime.now();
+    startDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   }
 
   void _startTimer() {
     setState(() {
-      startTime = DateTime.now();
+      startTime = TimeOfDay.now();
     });
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        elapsedTime = DateTime.now().difference(startTime!);
+        final now = DateTime.now();
+        elapsedTime = Duration(
+          hours: now.hour - startTime!.hour,
+          minutes: now.minute - startTime!.minute,
+          seconds: now.second,
+        );
       });
     });
   }
 
   void _stopTimer() {
     setState(() {
-      endTime = DateTime.now();
+      endTime = TimeOfDay.now();
+      endDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       timer?.cancel();
     });
   }
 
   void _selectDateTime(BuildContext context, bool isStartTime) async {
     final initialDateTime = isStartTime ? startTime : endTime;
-    final pickedDate = await showDatePicker(
+    final pickedTime = await showTimePicker(
       context: context,
-      initialDate: initialDateTime ?? DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      initialTime: initialDateTime != null ? initialDateTime : TimeOfDay.now(),
     );
 
-    if (pickedDate != null) {
-      final pickedTime = await showTimePicker(
-        context: context,
-        initialTime: initialDateTime != null
-            ? TimeOfDay.fromDateTime(initialDateTime)
-            : TimeOfDay.now(),
-      );
-
-      if (pickedTime != null) {
-        setState(() {
-          final selectedDateTime = DateTime(
-            pickedDate.year,
-            pickedDate.month,
-            pickedDate.day,
-            pickedTime.hour,
-            pickedTime.minute,
-          );
-
-          if (isStartTime) {
-            startDate = pickedDate;
-            startTime = selectedDateTime;
-          } else {
-            endDate = pickedDate;
-            endTime = selectedDateTime;
-          }
-        });
-      }
+    if (pickedTime != null) {
+      setState(() {
+        if (isStartTime) {
+          startTime = pickedTime;
+        } else {
+          endTime = pickedTime;
+        }
+      });
     }
   }
 
   void _selectDate(BuildContext context) async {
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: startDate ?? DateTime.now(),
+      initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
 
     if (pickedDate != null) {
       setState(() {
-        startDate = pickedDate;
+        startDate = DateFormat('yyyy-MM-dd').format(pickedDate);
       });
     }
   }
@@ -174,14 +159,15 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
             if (endTime != null)
               ElevatedButton(
                 onPressed: () {
-                  widget.onTimeSelected(startTime!, endTime!);
+                  widget.onTimeSelected(
+                      DateTime.parse(startDate!), DateTime.parse(endDate!));
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => JournalLocationPage(
                         style: widget.style,
-                        startTime: startTime!,
-                        endTime: endTime!,
+                        startTime: DateTime.parse(startDate!),
+                        endTime: DateTime.parse(endDate!),
                         onLocationSelected: (location) {
                           // ロケーション選択後の処理
                         },
@@ -204,11 +190,11 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
     return '$hours:$minutes:$seconds';
   }
 
-  String _formatTime(DateTime dateTime) {
-    return DateFormat('HH:mm').format(dateTime);
+  String _formatTime(TimeOfDay time) {
+    return '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
   }
 
-  String _formatDate(DateTime date) {
-    return DateFormat('yyyy年MM月dd日').format(date);
+  String _formatDate(String date) {
+    return DateFormat('yyyy年MM月dd日').format(DateTime.parse(date));
   }
 }

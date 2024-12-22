@@ -19,7 +19,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'riding_app.db');
     return await openDatabase(
       path,
-      version: 3,
+      version: 1,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -52,8 +52,8 @@ class DatabaseHelper {
         content TEXT,
         style TEXT,
         startDate TEXT,
-        startTime TEXT,
         endDate TEXT,
+        startTime TEXT,
         endTime TEXT,
         location TEXT,
         horse TEXT
@@ -61,35 +61,7 @@ class DatabaseHelper {
     ''');
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    if (oldVersion < 3) {
-      await db.execute('''
-        ALTER TABLE horses ADD COLUMN color TEXT
-      ''');
-    }
-    if (oldVersion < 2) {
-      await db.execute('''
-        CREATE TABLE journal_entries (
-          id INTEGER PRIMARY KEY AUTOINCREMENT,
-          title TEXT,
-          content TEXT,
-          style TEXT,
-          startTime TEXT,
-          endTime TEXT,
-          location TEXT,
-          horse TEXT
-        )
-      ''');
-    }
-    if (oldVersion < 4) {
-      await db.execute('''
-        ALTER TABLE journal_entries ADD COLUMN startDate TEXT
-      ''');
-      await db.execute('''
-        ALTER TABLE journal_entries ADD COLUMN endDate TEXT
-      ''');
-    }
-  }
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {}
 
   Future<int> insertHorse(Map<String, dynamic> horse) async {
     final db = await database;

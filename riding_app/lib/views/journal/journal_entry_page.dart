@@ -104,9 +104,8 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
                     title: _titleController.text,
                     content: _contentController.text,
                     style: _style,
-                    startDate: _startTime,
+                    date: _startTime,
                     startTime: _startTime,
-                    endDate: _endTime,
                     endTime: _endTime,
                     location: _location,
                     horse: _horse,
@@ -153,7 +152,7 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   // 以下、各種編集
   // ------------------------
 
-  /// スタイ��を編集する例
+  /// スタイルを編集する例
   void _editStyle() async {
     final newStyle = await showDialog<String>(
       context: context,
