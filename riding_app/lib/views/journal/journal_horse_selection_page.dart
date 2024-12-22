@@ -9,10 +9,11 @@ class JournalHorseSelectionPage extends StatelessWidget {
   final String style;
   final Function(String) onHorseSelected;
 
-  JournalHorseSelectionPage(
-      {required this.location,
-      required this.style,
-      required this.onHorseSelected});
+  JournalHorseSelectionPage({
+    required this.location,
+    required this.style,
+    required this.onHorseSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +21,14 @@ class JournalHorseSelectionPage extends StatelessWidget {
       appBar: AppBar(title: Text('馬を選択')),
       body: Consumer<HorseService>(
         builder: (context, horseService, child) {
+          final horses = horseService.getHorses();
+          if (horses.isEmpty) {
+            return Center(child: Text('馬の登録がありません。'));
+          }
           return ListView.builder(
-            itemCount: horseService.getHorses().length,
+            itemCount: horses.length,
             itemBuilder: (context, index) {
-              final horse = horseService.getHorses()[index];
+              final horse = horses[index];
               return ListTile(
                 title: Text(horse.name),
                 onTap: () {
@@ -53,8 +58,35 @@ class JournalHorseSelectionPage extends StatelessWidget {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => HorseAddPage()),
-          );
+            MaterialPageRoute(
+              builder: (context) => HorseAddPage(
+                onHorseAdded: (horseName) {
+                  // 馬が追加された後にリストを更新
+                  Navigator.pop(context);
+                  onHorseSelected(horseName);
+                  // 追加した馬を選択してエントリー詳細画面に遷移
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => JournalEntryPage(
+                        location: location,
+                        horse: horseName,
+                        style: style,
+                        startTime: DateTime.now(),
+                        endTime: DateTime.now(),
+                        onSave: (title, content) {
+                          // 保存処理をここに追加
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ).then((_) {
+            // 戻ってきたときにリストを更新
+            Provider.of<HorseService>(context, listen: false).reloadHorses();
+          });
         },
         child: Icon(Icons.add),
       ),
