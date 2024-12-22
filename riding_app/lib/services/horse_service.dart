@@ -14,20 +14,30 @@ class HorseService extends ChangeNotifier {
     final horseMaps = await _dbHelper.getHorses();
     _horses = horseMaps
         .map((map) => Horse(
-              name: map['name'],
-              breed: map['breed'],
-              description: null, // データベースに保存されていない場合
-              birthDate: null, // データベースに保存されていない場合
+              name: map['name'] ?? '',
+              breed: map['breed'] ?? '',
+              description: map['note'] ?? '',
+              birthDate: map['birthDate'] != null
+                  ? DateTime.tryParse(map['birthDate'])
+                  : null,
+              color: map['color'] ?? '',
             ))
         .toList();
     notifyListeners();
   }
 
-  Future<void> addHorse(String name) async {
-    final horse = Horse(name: name);
+  Future<void> addHorse(Map<String, dynamic> horseData) async {
+    final horse = Horse(
+      name: horseData['name'],
+      breed: horseData['breed'],
+      description: horseData['note'],
+      birthDate: DateTime.tryParse(horseData['birthDate']),
+      color: horseData['color'],
+    );
     _horses.add(horse);
-    await _dbHelper.insertHorse({'name': name});
+    await _dbHelper.insertHorse(horseData);
     notifyListeners();
+    await _loadHorsesFromDatabase();
   }
 
   List<Horse> getHorses() {

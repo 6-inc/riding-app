@@ -19,7 +19,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'riding_app.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -30,8 +30,10 @@ class DatabaseHelper {
       CREATE TABLE horses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
+        color TEXT,
         breed TEXT,
-        age INTEGER
+        birthDate TEXT,
+        note TEXT
       )
     ''');
     await db.execute('''
@@ -43,9 +45,26 @@ class DatabaseHelper {
         FOREIGN KEY (horseId) REFERENCES horses (id)
       )
     ''');
+    await db.execute('''
+      CREATE TABLE journal_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        content TEXT,
+        style TEXT,
+        startTime TEXT,
+        endTime TEXT,
+        location TEXT,
+        horse TEXT
+      )
+    ''');
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 3) {
+      await db.execute('''
+        ALTER TABLE horses ADD COLUMN color TEXT
+      ''');
+    }
     if (oldVersion < 2) {
       await db.execute('''
         CREATE TABLE journal_entries (
@@ -120,5 +139,9 @@ class DatabaseHelper {
     );
   }
 
-  // Similar methods for riding_records
+  Future<void> resetDatabase() async {
+    String path = join(await getDatabasesPath(), 'riding_app.db');
+    await deleteDatabase(path);
+    _database = null; // データベースインスタンスをリセット
+  }
 }

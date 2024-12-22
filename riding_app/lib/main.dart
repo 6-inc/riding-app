@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
-import 'theme.dart';
-import 'views/home.dart';
-import 'router.dart';
-import 'models/app_state_model.dart';
-import 'services/journal_service.dart';
-import 'services/horse_service.dart';
+import 'package:riding_app/theme.dart';
+import 'package:riding_app/views/home.dart';
+import 'package:riding_app/router.dart';
+import 'package:riding_app/models/app_state_model.dart';
+import 'package:riding_app/services/journal_service.dart';
+import 'package:riding_app/services/horse_service.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();

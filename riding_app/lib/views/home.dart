@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:riding_app/database_helper.dart';
 import 'package:riding_app/widget/grid_lines.dart';
 import 'package:riding_app/views/journal/journal_list_page.dart';
 import 'package:riding_app/widget/app_bar.dart';
@@ -53,6 +55,16 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
                 Text('2'),
                 Text('3'),
               ]),
+              ElevatedButton(
+                onPressed: () async {
+                  await Provider.of<DatabaseHelper>(context, listen: false)
+                      .resetDatabase();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('データベースがリセットされました。')),
+                  );
+                },
+                child: Text('データベースをリセット'),
+              ),
             ],
           ),
         ),
