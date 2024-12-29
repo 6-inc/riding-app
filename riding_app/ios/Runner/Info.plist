@@ -49,5 +49,13 @@
 		<false/>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>写真ライブラリへのアクセスを許可してください。</string>
+		<key>MinimumOSVersion</key>
+		<string>14.0</string>
+		<key>io.flutter.embedded_views_preview</key>
+		<true/>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app needs access to location when open to show your current location on the map.</string>
+		<key>NSLocationAlwaysUsageDescription</key>
+		<string>This app needs access to location when in the background to show your current location on the map.</string>
 	</dict>
 </plist>

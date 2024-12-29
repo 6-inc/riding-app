@@ -264,7 +264,3 @@ flutter_launcher_icons:
     # macos:
     #     generate: true
     #     image_path: "assets/images/ios/AppIcon-40@2x.png"
-
-dependencies:
-  image_picker: ^latest_version
-  firebase_storage: ^latest_version

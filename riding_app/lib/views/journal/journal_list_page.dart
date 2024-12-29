@@ -12,17 +12,18 @@ class JournalListPage extends StatelessWidget {
         builder: (context, journalService, child) {
           final entries = journalService.getEntries();
           if (entries.isEmpty) {
-            return Center(child: Text('記録がありません'));
+            return const Center(child: Text('記録がありません'));
           }
           return ListView.builder(
             itemCount: entries.length,
             itemBuilder: (context, index) {
               final entry = entries[index];
               return Card(
-                margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                margin:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 child: ListTile(
                   title: Text(entry.title,
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text('スタイル: ${entry.style}'),
                   onTap: () {
                     Navigator.push(
