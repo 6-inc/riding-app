@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:riding_app/services/horse_service.dart';
 import 'horse_detail_page.dart';
 import 'horse_add_page.dart';
+import 'dart:io';
 
 class HorseListPage extends StatelessWidget {
   @override
@@ -12,20 +13,22 @@ class HorseListPage extends StatelessWidget {
         builder: (context, horseService, child) {
           final horses = horseService.getHorses();
           if (horses.isEmpty) {
-            return Center(
+            return const Center(
               child: Text('馬が登録されていません。'),
             );
           }
           return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 3,
-              childAspectRatio: 3,
+              childAspectRatio: 0.8,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 8.0,
             ),
             itemCount: horses.length,
             itemBuilder: (context, index) {
               final horse = horses[index];
               return Card(
-                margin: EdgeInsets.all(8.0),
+                margin: const EdgeInsets.all(8.0),
                 child: InkWell(
                   onTap: () {
                     Navigator.push(
@@ -35,12 +38,27 @@ class HorseListPage extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Center(
-                    child: Text(
-                      horse.name,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
-                    ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage:
+                            horse.imageUrl != null && horse.imageUrl!.isNotEmpty
+                                ? FileImage(File(horse.imageUrl!))
+                                : const AssetImage('assets/images/icon.png')
+                                    as ImageProvider,
+                        onBackgroundImageError: (exception, stackTrace) {
+                          print('Error loading image: $exception');
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        horse.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -55,7 +73,7 @@ class HorseListPage extends StatelessWidget {
             MaterialPageRoute(builder: (context) => HorseAddPage()),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -21,6 +21,7 @@ class HorseService extends ChangeNotifier {
                   ? DateTime.tryParse(map['birthDate'])
                   : null,
               color: map['color'] ?? '',
+              imageUrl: map['imageUrl'] ?? '',
             ))
         .toList();
     notifyListeners();

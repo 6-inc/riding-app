@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:riding_app/services/horse_service.dart';
 import 'package:intl/intl.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
 
 class HorseAddPage extends StatefulWidget {
   final Function(String)? onHorseAdded;
@@ -19,106 +22,160 @@ class _HorseAddPageState extends State<HorseAddPage> {
   String? _color;
   DateTime? _birthDate;
   String? _note;
+  File? _imageFile;
+  String? _imageUrl;
+  bool _isLoading = false;
+
+  Future<void> _pickImage() async {
+    setState(() {
+      _isLoading = true;
+    });
+    final ImagePicker picker = ImagePicker();
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      final directory = await getApplicationDocumentsDirectory();
+      final String path = directory.path;
+      final String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final File localImage =
+          await File(pickedFile.path).copy('$path/$fileName');
+
+      setState(() {
+        _imageFile = localImage;
+        _imageUrl = localImage.path;
+      });
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('馬を追加'),
+        title: const Text('馬を追加'),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: <Widget>[
-              TextFormField(
-                decoration: InputDecoration(labelText: '馬の名前'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return '名前を入力してください';
-                  }
-                  return null;
-                },
-                onSaved: (value) {
-                  _horseName = value ?? '';
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: '品種'),
-                onSaved: (value) {
-                  _breed = value ?? '';
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: '毛色'),
-                onSaved: (value) {
-                  _color = value ?? '';
-                },
-              ),
-              TextFormField(
-                decoration: InputDecoration(labelText: 'メモ'),
-                onSaved: (value) {
-                  _note = value ?? '';
-                },
-              ),
-              SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    _birthDate == null
-                        ? '誕生日を選択'
-                        : '誕生日: ${DateFormat('yyyy-MM-dd').format(_birthDate!)}',
+      body: _isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          width: 120,
+                          height: 120,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            shape: BoxShape.circle,
+                          ),
+                          child: _imageFile != null
+                              ? ClipOval(
+                                  child: Image.file(
+                                    _imageFile!,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
+                              : Icon(Icons.add_a_photo, size: 40),
+                        ),
+                      ),
+                      SizedBox(height: 20),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: '馬の名前'),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return '名前を入力してください';
+                          }
+                          return null;
+                        },
+                        onSaved: (value) {
+                          _horseName = value ?? '';
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: '品種'),
+                        onSaved: (value) {
+                          _breed = value ?? '';
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: '毛色'),
+                        onSaved: (value) {
+                          _color = value ?? '';
+                        },
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(labelText: 'メモ'),
+                        onSaved: (value) {
+                          _note = value ?? '';
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Text(
+                            _birthDate == null
+                                ? '誕生日を選択'
+                                : '誕生日: ${DateFormat('yyyy-MM-dd').format(_birthDate!)}',
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.calendar_today),
+                            onPressed: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(1900),
+                                lastDate: DateTime(2100),
+                              );
+                              if (pickedDate != null) {
+                                setState(() {
+                                  _birthDate = pickedDate;
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState?.validate() ?? false) {
+                            _formKey.currentState?.save();
+                            if (_horseName.isNotEmpty) {
+                              Provider.of<HorseService>(context, listen: false)
+                                  .addHorse({
+                                'name': _horseName,
+                                'breed': _breed ?? '',
+                                'color': _color ?? '',
+                                'birthDate':
+                                    _birthDate?.toIso8601String() ?? '',
+                                'note': _note ?? '',
+                                'imageUrl': _imageUrl ?? '',
+                              });
+                              if (widget.onHorseAdded != null) {
+                                widget.onHorseAdded!(_horseName);
+                              }
+                              Navigator.pop(context);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('名前の入力は必須です。')),
+                              );
+                            }
+                          }
+                        },
+                        child: Text('追加'),
+                      ),
+                    ],
                   ),
-                  IconButton(
-                    icon: Icon(Icons.calendar_today),
-                    onPressed: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(1900),
-                        lastDate: DateTime(2100),
-                      );
-                      if (pickedDate != null) {
-                        setState(() {
-                          _birthDate = pickedDate;
-                        });
-                      }
-                    },
-                  ),
-                ],
+                ),
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState?.validate() ?? false) {
-                    _formKey.currentState?.save();
-                    if (_horseName.isNotEmpty) {
-                      Provider.of<HorseService>(context, listen: false)
-                          .addHorse({
-                        'name': _horseName,
-                        'breed': _breed ?? '',
-                        'color': _color ?? '',
-                        'birthDate': _birthDate?.toIso8601String() ?? '',
-                        'note': _note ?? '',
-                      });
-                      if (widget.onHorseAdded != null) {
-                        widget.onHorseAdded!(_horseName);
-                      }
-                      Navigator.pop(context);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('名前の入力は必須です。')),
-                      );
-                    }
-                  }
-                },
-                child: Text('追加'),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

@@ -33,7 +33,8 @@ class DatabaseHelper {
         color TEXT,
         breed TEXT,
         birthDate TEXT,
-        note TEXT
+        note TEXT,
+        imageUrl TEXT
       )
     ''');
     await db.execute('''
@@ -51,8 +52,7 @@ class DatabaseHelper {
         title TEXT,
         content TEXT,
         style TEXT,
-        startDate TEXT,
-        endDate TEXT,
+        date TEXT,
         startTime TEXT,
         endTime TEXT,
         location TEXT,

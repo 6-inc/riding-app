@@ -42,9 +42,7 @@ dependencies:
     font_awesome_flutter: ^10.6.0
     sqflite: ^2.4.1
     intl: ^0.20.1
-    image_picker: ^1.1.2
-    path_provider: ^2.1.5
-    path: ^1.8.0
+path_provider: ^2.1.5
 dev_dependencies:
     flutter_test:
         sdk: flutter
@@ -266,3 +264,7 @@ flutter_launcher_icons:
     # macos:
     #     generate: true
     #     image_path: "assets/images/ios/AppIcon-40@2x.png"
+
+dependencies:
+  image_picker: ^latest_version
+  firebase_storage: ^latest_version

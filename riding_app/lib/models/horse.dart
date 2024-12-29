@@ -4,6 +4,7 @@ class Horse {
   final String? description;
   final DateTime? birthDate;
   final String? color;
+  final String? imageUrl;
 
   Horse({
     required this.name,
@@ -11,5 +12,6 @@ class Horse {
     this.description,
     this.birthDate,
     this.color,
+    this.imageUrl,
   });
 }
