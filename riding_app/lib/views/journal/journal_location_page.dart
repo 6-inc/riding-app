@@ -4,6 +4,8 @@ import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:http/http.dart' as http;
+import 'dart:io';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class JournalLocationPage extends StatefulWidget {
   final String style;
@@ -106,8 +108,7 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
   }
 
   void _performSearch(String query) async {
-    const apiKey =
-        'AIzaSyDH4dT3P8Zl7G4_NRPP_764rQXZ5670T34'; // Google APIキーをここに設定
+    final apiKey = dotenv.env['GOOGLE_API_KEY'];
     final url = Uri.parse(
         'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$query&key=$apiKey&location=${_initialPosition.latitude},${_initialPosition.longitude}&radius=5000');
 
