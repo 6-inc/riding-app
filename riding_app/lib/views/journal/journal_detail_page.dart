@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/models/journal_entry.dart';
 import 'package:intl/intl.dart';
+import 'package:riding_app/views/journal/journal_edit_page.dart';
 
 class JournalDetailPage extends StatelessWidget {
   final JournalEntry entry;
@@ -10,7 +11,22 @@ class JournalDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('エントリー詳細')),
+      appBar: AppBar(
+        title: Text('エントリー詳細'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => JournalEditPage(entry: entry),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

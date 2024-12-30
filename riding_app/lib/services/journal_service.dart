@@ -54,4 +54,24 @@ class JournalService extends ChangeNotifier {
   Future<void> reloadEntries() async {
     await _loadEntriesFromDatabase();
   }
+
+  Future<void> updateEntry(JournalEntry entry) async {
+    if (entry.id == null) {
+      throw ArgumentError(
+          'Journal Entry ID cannot be null for update operation');
+    }
+    await _dbHelper.updateJournalEntry({
+      'id': entry.id,
+      'title': entry.title,
+      'content': entry.content,
+      'style': entry.style,
+      'date': entry.date.toIso8601String(),
+      'startTime': entry.startTime.toIso8601String(),
+      'endTime': entry.endTime.toIso8601String(),
+      'location': entry.location,
+      'horse': entry.horse,
+    });
+    await _loadEntriesFromDatabase();
+    notifyListeners();
+  }
 }

@@ -17,16 +17,24 @@ class HorseAddPage extends StatefulWidget {
 
 class _HorseAddPageState extends State<HorseAddPage> {
   final _formKey = GlobalKey<FormState>();
-  String _horseName = '';
-  String? _breed;
-  String? _color;
+  final TextEditingController _horseNameController = TextEditingController();
+  final TextEditingController _breedController = TextEditingController();
+  final TextEditingController _colorController = TextEditingController();
+  final TextEditingController _noteController = TextEditingController();
   DateTime? _birthDate;
-  String? _note;
   File? _imageFile;
   String? _imageUrl;
   bool _isLoading = false;
 
-  /// ギャラリーから画像を選択し、アプリ専用フォルダに保存
+  @override
+  void dispose() {
+    _horseNameController.dispose();
+    _breedController.dispose();
+    _colorController.dispose();
+    _noteController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickImage() async {
     setState(() {
       _isLoading = true;
@@ -37,24 +45,16 @@ class _HorseAddPageState extends State<HorseAddPage> {
         await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
-      // アプリ専用フォルダを取得
-      final directory = await getApplicationDocumentsDirectory();
-      final String path = directory.path;
-      final String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
-
-      // ギャラリーから取得した画像をアプリ専用フォルダにコピー
-      final File localImage =
-          await File(pickedFile.path).copy('$path/$fileName');
-
       setState(() {
-        _imageFile = localImage;
-        _imageUrl = localImage.path; // ローカルファイルのパスを保持
+        _imageFile = File(pickedFile.path);
+        _imageUrl = _imageFile!.path;
+        _isLoading = false;
+      });
+    } else {
+      setState(() {
+        _isLoading = false;
       });
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   /// 入力内容をHorseServiceに渡して馬を追加する
@@ -62,20 +62,20 @@ class _HorseAddPageState extends State<HorseAddPage> {
     if (_formKey.currentState?.validate() ?? false) {
       _formKey.currentState?.save(); // onSavedで各変数が更新される
 
-      if (_horseName.isNotEmpty) {
+      if (_horseNameController.text.isNotEmpty) {
         // HorseServiceへ登録 (Map形式で受ける実装例)
         Provider.of<HorseService>(context, listen: false).addHorse({
-          'name': _horseName,
-          'breed': _breed ?? '',
-          'color': _color ?? '',
+          'name': _horseNameController.text,
+          'breed': _breedController.text ?? '',
+          'color': _colorController.text ?? '',
           'birthDate': _birthDate?.toIso8601String() ?? '',
-          'note': _note ?? '',
+          'note': _noteController.text ?? '',
           'imageUrl': _imageUrl ?? '',
         });
 
         // コールバックがあれば呼ぶ
         if (widget.onHorseAdded != null) {
-          widget.onHorseAdded!(_horseName);
+          widget.onHorseAdded!(_horseNameController.text);
         }
         Navigator.pop(context);
       } else {
@@ -125,6 +125,7 @@ class _HorseAddPageState extends State<HorseAddPage> {
 
                       // 馬の名前
                       TextFormField(
+                        controller: _horseNameController,
                         decoration: const InputDecoration(labelText: '馬の名前'),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -132,33 +133,24 @@ class _HorseAddPageState extends State<HorseAddPage> {
                           }
                           return null;
                         },
-                        onSaved: (value) {
-                          _horseName = value ?? '';
-                        },
                       ),
 
                       // 品種
                       TextFormField(
+                        controller: _breedController,
                         decoration: const InputDecoration(labelText: '品種'),
-                        onSaved: (value) {
-                          _breed = value ?? '';
-                        },
                       ),
 
                       // 毛色
                       TextFormField(
+                        controller: _colorController,
                         decoration: const InputDecoration(labelText: '毛色'),
-                        onSaved: (value) {
-                          _color = value ?? '';
-                        },
                       ),
 
                       // メモ
                       TextFormField(
+                        controller: _noteController,
                         decoration: const InputDecoration(labelText: 'メモ'),
-                        onSaved: (value) {
-                          _note = value ?? '';
-                        },
                       ),
                       const SizedBox(height: 20),
 
