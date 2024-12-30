@@ -9,8 +9,10 @@ import 'package:riding_app/models/app_state_model.dart';
 import 'package:riding_app/services/journal_service.dart';
 import 'package:riding_app/services/horse_service.dart';
 import 'package:riding_app/database_helper.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: ".env");
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
