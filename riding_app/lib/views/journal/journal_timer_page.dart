@@ -112,8 +112,8 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '日付: ${_formatDate(startDate!)}',
-                  style: TextStyle(fontSize: 18),
+                  _formatDate(startDate!),
+                  style: const TextStyle(fontSize: 18),
                 ),
                 IconButton(
                   icon: Icon(Icons.calendar_today, color: Colors.blue),

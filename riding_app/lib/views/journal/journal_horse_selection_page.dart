@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:riding_app/services/horse_service.dart';
 import 'package:riding_app/views/journal/journal_entry_page.dart';
 import 'package:riding_app/views/horse/horse_add_page.dart';
+import 'dart:io';
 
 class JournalHorseSelectionPage extends StatelessWidget {
   final String location;
@@ -25,30 +26,60 @@ class JournalHorseSelectionPage extends StatelessWidget {
           if (horses.isEmpty) {
             return Center(child: Text('馬の登録がありません。'));
           }
-          return ListView.builder(
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              childAspectRatio: 0.8,
+              crossAxisSpacing: 8.0,
+              mainAxisSpacing: 8.0,
+            ),
             itemCount: horses.length,
             itemBuilder: (context, index) {
               final horse = horses[index];
-              return ListTile(
-                title: Text(horse.name),
-                onTap: () {
-                  onHorseSelected(horse.name);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JournalEntryPage(
-                        location: location,
-                        horse: horse.name,
-                        style: style,
-                        startTime: DateTime.now(),
-                        endTime: DateTime.now(),
-                        onSave: (title, content) {
-                          // 保存処理をここに追加
+              return Card(
+                margin: const EdgeInsets.all(8.0),
+                child: InkWell(
+                  onTap: () {
+                    onHorseSelected(horse.name);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => JournalEntryPage(
+                          location: location,
+                          horse: horse.name,
+                          style: style,
+                          startTime: DateTime.now(),
+                          endTime: DateTime.now(),
+                          onSave: (title, content) {
+                            // 保存処理をここに追加
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage:
+                            horse.imageUrl != null && horse.imageUrl!.isNotEmpty
+                                ? FileImage(File(horse.imageUrl!))
+                                : const AssetImage('assets/images/icon.png')
+                                    as ImageProvider,
+                        onBackgroundImageError: (exception, stackTrace) {
+                          print('Error loading image: $exception');
                         },
                       ),
-                    ),
-                  );
-                },
+                      const SizedBox(height: 8),
+                      Text(
+                        horse.name,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           );

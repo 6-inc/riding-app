@@ -52,11 +52,6 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              GridLines(children: [
-                Text('1'),
-                Text('2'),
-                Text('3'),
-              ]),
               ElevatedButton(
                 onPressed: () async {
                   await Provider.of<DatabaseHelper>(context, listen: false)
