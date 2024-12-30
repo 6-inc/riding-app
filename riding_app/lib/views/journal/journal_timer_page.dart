@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:riding_app/views/journal/journal_location_page.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter/widgets.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class JournalTimerPage extends StatefulWidget {
   final String style;
@@ -114,14 +116,20 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                   style: TextStyle(fontSize: 18),
                 ),
                 IconButton(
-                  icon: Icon(Icons.edit, color: Colors.blue),
+                  icon: Icon(Icons.calendar_today, color: Colors.blue),
                   onPressed: () => _selectDate(context),
                 ),
               ],
             ),
-            Text(
-              _formatElapsedTime(elapsedTime),
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            CircularPercentIndicator(
+              radius: 100.0,
+              lineWidth: 10.0,
+              percent: elapsedTime.inSeconds / 3600.0,
+              center: Text(
+                _formatElapsedTime(elapsedTime),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              progressColor: Colors.blue,
             ),
             if (startTime != null)
               Row(
@@ -132,7 +140,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
+                    icon: Icon(Icons.access_time, color: Colors.blue),
                     onPressed: () => _selectDateTime(context, true),
                   ),
                 ],
@@ -146,7 +154,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                     style: TextStyle(fontSize: 18),
                   ),
                   IconButton(
-                    icon: Icon(Icons.edit, color: Colors.blue),
+                    icon: Icon(Icons.access_time, color: Colors.blue),
                     onPressed: () => _selectDateTime(context, false),
                   ),
                 ],

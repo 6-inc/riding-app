@@ -4,7 +4,6 @@ import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:http/http.dart' as http;
-import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class JournalLocationPage extends StatefulWidget {
