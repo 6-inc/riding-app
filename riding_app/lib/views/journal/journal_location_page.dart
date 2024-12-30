@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
+import 'package:http/http.dart' as http;
 
 class JournalLocationPage extends StatefulWidget {
   final String style;
@@ -25,6 +27,7 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
   late final TextEditingController _searchController;
   PickResult? selectedPlace;
   static const LatLng _initialPosition = LatLng(35.6895, 139.6917); // 東京
+  List<Map<String, String>> _searchResults = [];
 
   @override
   void initState() {
@@ -57,56 +60,27 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
                 filled: true,
                 fillColor: Colors.white,
               ),
+              style: TextStyle(
+                fontSize: 16.0,
+                color: Colors.black,
+              ),
               onSubmitted: (value) {
-                // 検索処理を実装
+                _performSearch(value);
               },
             ),
           ),
           Expanded(
-            child: PlacePicker(
-              apiKey: "YOUR-API-KEY",
-              onPlacePicked: (PickResult result) {
-                setState(() {
-                  selectedPlace = result;
-                  _searchController.text = result.formattedAddress ?? '';
-                });
-              },
-              initialPosition: _initialPosition,
-              useCurrentLocation: true,
-              resizeToAvoidBottomInset: false,
-              selectedPlaceWidgetBuilder:
-                  (_, selectedPlace, state, isSearchBarFocused) {
-                return isSearchBarFocused
-                    ? Container()
-                    : FloatingCard(
-                        bottomPosition: 0,
-                        leftPosition: 0,
-                        rightPosition: 0,
-                        child: state == SearchingState.Searching
-                            ? const Center(child: CircularProgressIndicator())
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      selectedPlace?.formattedAddress ?? '',
-                                      style: const TextStyle(fontSize: 16),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        if (selectedPlace != null) {
-                                          _navigateToHorseSelection(
-                                              selectedPlace.formattedAddress ??
-                                                  '');
-                                        }
-                                      },
-                                      child: const Text('この場所を選択'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                      );
+            child: ListView.builder(
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final place = _searchResults[index];
+                return ListTile(
+                  title: Text(place['name'] ?? 'Unknown'),
+                  subtitle: Text(place['address'] ?? 'No address'),
+                  onTap: () {
+                    _navigateToHorseSelection(place['name'] ?? '');
+                  },
+                );
               },
             ),
           ),
@@ -129,5 +103,27 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
         ),
       ),
     );
+  }
+
+  void _performSearch(String query) async {
+    const apiKey =
+        'AIzaSyDH4dT3P8Zl7G4_NRPP_764rQXZ5670T34'; // Google APIキーをここに設定
+    final url = Uri.parse(
+        'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$query&key=$apiKey&location=${_initialPosition.latitude},${_initialPosition.longitude}&radius=5000');
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      setState(() {
+        _searchResults = (data['results'] as List).map((place) {
+          return {
+            'name': place['name'] as String,
+            'address': place['formatted_address'] as String,
+          };
+        }).toList();
+      });
+    } else {
+      print('Failed to load places');
+    }
   }
 }
