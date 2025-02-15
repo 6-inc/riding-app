@@ -114,109 +114,103 @@ class _JournalEditPageState extends State<JournalEditPage> {
     }
   }
 
+  void _updateEntry() {
+    if (widget.entry.id == null) {
+      // IDがnullの場合の処理を追加
+      print('エントリーIDがnullです。更新操作を実行できません。');
+      return;
+    }
+    // 既存の更新処理...
+    journalService.updateEntry(JournalEntry(
+      id: widget.entry.id,
+      title: _titleController.text,
+      content: _contentController.text,
+      style: _styleController.text,
+      date: _date,
+      startTime: DateTime(_date.year, _date.month, _date.day, _startTime.hour,
+          _startTime.minute),
+      endTime: DateTime(
+          _date.year, _date.month, _date.day, _endTime.hour, _endTime.minute),
+      location: _locationController.text,
+      horse: _horseController.text,
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('編集')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            DropdownButtonFormField<String>(
-              value: _styleController.text,
-              items: _styles.map((String style) {
-                return DropdownMenuItem<String>(
-                  value: style,
-                  child: Text(style),
-                );
-              }).toList(),
-              onChanged: (String? newValue) {
-                setState(() {
-                  _styleController.text = newValue!;
-                });
-              },
-              decoration: InputDecoration(labelText: 'スタイル'),
-            ),
-            Row(
-              children: [
-                Text('日付: ${DateFormat('yyyy-MM-dd').format(_date)}'),
-                IconButton(
-                  icon: Icon(Icons.calendar_today),
-                  onPressed: () => _selectDate(context),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text('開始時間: ${_startTime.format(context)}'),
-                IconButton(
-                  icon: Icon(Icons.access_time),
-                  onPressed: () => _selectTime(context, true),
-                ),
-              ],
-            ),
-            Row(
-              children: [
-                Text('終了時間: ${_endTime.format(context)}'),
-                IconButton(
-                  icon: Icon(Icons.access_time),
-                  onPressed: () => _selectTime(context, false),
-                ),
-              ],
-            ),
-            TextField(
-              controller: _locationController,
-              decoration: InputDecoration(labelText: '場所'),
-              readOnly: true,
-              onTap: _pickLocation,
-            ),
-            TextField(
-              controller: _horseController,
-              decoration: InputDecoration(labelText: '馬'),
-            ),
-            TextField(
-              controller: _titleController,
-              decoration: InputDecoration(labelText: 'タイトル'),
-            ),
-            TextField(
-              controller: _contentController,
-              decoration: InputDecoration(labelText: '内容'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final title = _titleController.text.isNotEmpty
-                    ? _titleController.text
-                    : 'Untitled';
-                final content = _contentController.text.isNotEmpty
-                    ? _contentController.text
-                    : 'No content';
-                final style = _styleController.text.isNotEmpty
-                    ? _styleController.text
-                    : 'Unknown';
-                final location = _locationController.text.isNotEmpty
-                    ? _locationController.text
-                    : 'Unknown location';
-                final horse = _horseController.text.isNotEmpty
-                    ? _horseController.text
-                    : 'Unknown horse';
-
-                journalService.updateEntry(JournalEntry(
-                  title: title,
-                  content: content,
-                  style: style,
-                  date: _date,
-                  startTime: DateTime(_date.year, _date.month, _date.day,
-                      _startTime.hour, _startTime.minute),
-                  endTime: DateTime(_date.year, _date.month, _date.day,
-                      _endTime.hour, _endTime.minute),
-                  location: location,
-                  horse: horse,
-                ));
-                Navigator.pop(context);
-              },
-              child: const Text('保存'),
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              DropdownButtonFormField<String>(
+                value: _styleController.text,
+                items: _styles.map((String style) {
+                  return DropdownMenuItem<String>(
+                    value: style,
+                    child: Text(style),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _styleController.text = newValue!;
+                  });
+                },
+                decoration: InputDecoration(labelText: 'スタイル'),
+              ),
+              Row(
+                children: [
+                  Text('日付: ${DateFormat('yyyy-MM-dd').format(_date)}'),
+                  IconButton(
+                    icon: Icon(Icons.calendar_today),
+                    onPressed: () => _selectDate(context),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('開始時間: ${_startTime.format(context)}'),
+                  IconButton(
+                    icon: Icon(Icons.access_time),
+                    onPressed: () => _selectTime(context, true),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Text('終了時間: ${_endTime.format(context)}'),
+                  IconButton(
+                    icon: Icon(Icons.access_time),
+                    onPressed: () => _selectTime(context, false),
+                  ),
+                ],
+              ),
+              TextField(
+                controller: _locationController,
+                decoration: InputDecoration(labelText: '場所'),
+                readOnly: true,
+                onTap: _pickLocation,
+              ),
+              TextField(
+                controller: _horseController,
+                decoration: InputDecoration(labelText: '馬'),
+              ),
+              TextField(
+                controller: _titleController,
+                decoration: InputDecoration(labelText: 'タイトル'),
+              ),
+              TextField(
+                controller: _contentController,
+                decoration: InputDecoration(labelText: '内容'),
+              ),
+              ElevatedButton(
+                onPressed: _updateEntry,
+                child: const Text('保存'),
+              ),
+            ],
+          ),
         ),
       ),
     );

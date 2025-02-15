@@ -5,6 +5,7 @@ import 'package:riding_app/services/horse_service.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HorseAddPage extends StatefulWidget {
   final Function(String)? onHorseAdded;
@@ -27,6 +28,29 @@ class _HorseAddPageState extends State<HorseAddPage> {
   bool _isLoading = false;
 
   @override
+  void initState() {
+    super.initState();
+    _loadSavedImage();
+  }
+
+  Future<void> _loadSavedImage() async {
+    final prefs = await SharedPreferences.getInstance();
+    final savedImagePath = prefs.getString('savedImagePath');
+    if (savedImagePath != null) {
+      final savedImageFile = File(savedImagePath);
+      if (await savedImageFile.exists()) {
+        setState(() {
+          _imageFile = savedImageFile;
+          _imageUrl = savedImagePath;
+        });
+      } else {
+        // 画像ファイルが存在しない場合、SharedPreferencesから削除する
+        await prefs.remove('savedImagePath');
+      }
+    }
+  }
+
+  @override
   void dispose() {
     _horseNameController.dispose();
     _breedController.dispose();
@@ -45,11 +69,22 @@ class _HorseAddPageState extends State<HorseAddPage> {
         await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
+      final File tempImageFile = File(pickedFile.path);
+      final Directory appDocDir = await getApplicationDocumentsDirectory();
+      final String appDocPath = appDocDir.path;
+      final String fileName = pickedFile.name;
+      final File savedImageFile =
+          await tempImageFile.copy('$appDocPath/$fileName');
+
       setState(() {
-        _imageFile = File(pickedFile.path);
-        _imageUrl = _imageFile!.path;
+        _imageFile = savedImageFile;
+        _imageUrl = savedImageFile.path;
         _isLoading = false;
       });
+
+      // 画像のパスをSharedPreferencesに保存
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('savedImagePath', savedImageFile.path);
     } else {
       setState(() {
         _isLoading = false;
@@ -57,23 +92,20 @@ class _HorseAddPageState extends State<HorseAddPage> {
     }
   }
 
-  /// 入力内容をHorseServiceに渡して馬を追加する
   void _saveHorse() {
     if (_formKey.currentState?.validate() ?? false) {
-      _formKey.currentState?.save(); // onSavedで各変数が更新される
+      _formKey.currentState?.save();
 
       if (_horseNameController.text.isNotEmpty) {
-        // HorseServiceへ登録 (Map形式で受ける実装例)
         Provider.of<HorseService>(context, listen: false).addHorse({
           'name': _horseNameController.text,
-          'breed': _breedController.text ?? '',
-          'color': _colorController.text ?? '',
+          'breed': _breedController.text,
+          'color': _colorController.text,
           'birthDate': _birthDate?.toIso8601String() ?? '',
-          'note': _noteController.text ?? '',
+          'note': _noteController.text,
           'imageUrl': _imageUrl ?? '',
         });
 
-        // コールバックがあれば呼ぶ
         if (widget.onHorseAdded != null) {
           widget.onHorseAdded!(_horseNameController.text);
         }
@@ -101,7 +133,7 @@ class _HorseAddPageState extends State<HorseAddPage> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      // 画像選択ボタン (丸い枠で表示)
+                      // 画像選択部分
                       GestureDetector(
                         onTap: _pickImage,
                         child: Container(
@@ -122,7 +154,6 @@ class _HorseAddPageState extends State<HorseAddPage> {
                         ),
                       ),
                       const SizedBox(height: 20),
-
                       // 馬の名前
                       TextFormField(
                         controller: _horseNameController,
@@ -134,27 +165,23 @@ class _HorseAddPageState extends State<HorseAddPage> {
                           return null;
                         },
                       ),
-
                       // 品種
                       TextFormField(
                         controller: _breedController,
                         decoration: const InputDecoration(labelText: '品種'),
                       ),
-
                       // 毛色
                       TextFormField(
                         controller: _colorController,
                         decoration: const InputDecoration(labelText: '毛色'),
                       ),
-
                       // メモ
                       TextFormField(
                         controller: _noteController,
                         decoration: const InputDecoration(labelText: 'メモ'),
                       ),
                       const SizedBox(height: 20),
-
-                      // 誕生日の選択
+                      // 誕生日選択
                       Row(
                         children: [
                           Text(
@@ -181,7 +208,6 @@ class _HorseAddPageState extends State<HorseAddPage> {
                         ],
                       ),
                       const SizedBox(height: 20),
-
                       // 追加ボタン
                       ElevatedButton(
                         onPressed: _saveHorse,

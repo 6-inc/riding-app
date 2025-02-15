@@ -52,47 +52,52 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Icon(Icons.edit)),
+      appBar: AppBar(title: const Text('記録')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          // 内容が多くなった場合にスクロールできるように
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 16),
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'タイトル'),
-              ),
-              TextField(
+        // 内容が多くなった場合にスクロールできるように
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 16),
+            TextField(
+              controller: _titleController,
+              decoration: const InputDecoration(labelText: 'タイトル'),
+            ),
+            Expanded(
+              child: TextField(
                 controller: _contentController,
-                decoration: const InputDecoration(labelText: '内容'),
+                decoration: const InputDecoration(
+                  labelText: '今回の乗馬はどうでしたか？',
+                  alignLabelWithHint: true,
+                ),
+                maxLines: null,
+                expands: true,
               ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  // 5. 保存ボタン押下時に、State にある最新値を addEntry に渡す
-                  final newEntry = JournalEntry(
-                    title: _titleController.text,
-                    content: _contentController.text,
-                    style: _style,
-                    date: _startTime,
-                    startTime: _startTime,
-                    endTime: _endTime,
-                    location: _location,
-                    horse: _horse,
-                  );
-                  Provider.of<JournalService>(context, listen: false)
-                      .addEntry(newEntry);
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () {
+                // 5. 保存ボタン押下時に、State にある最新値を addEntry に渡す
+                final newEntry = JournalEntry(
+                  title: _titleController.text,
+                  content: _contentController.text,
+                  style: _style,
+                  date: _startTime,
+                  startTime: _startTime,
+                  endTime: _endTime,
+                  location: _location,
+                  horse: _horse,
+                );
+                Provider.of<JournalService>(context, listen: false)
+                    .addEntry(newEntry);
 
-                  // メイン画面へ戻る
-                  Navigator.popUntil(context, ModalRoute.withName('/'));
-                },
-                child: const Text('保存'),
-              ),
-            ],
-          ),
+                // メイン画面へ戻る
+                Navigator.popUntil(context, ModalRoute.withName('/'));
+              },
+              child: const Text('保存'),
+            ),
+          ],
         ),
       ),
     );
