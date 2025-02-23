@@ -9,6 +9,7 @@
 .history
 .svn/
 *.env
+riding_app/.env
 
 # IntelliJ related
 *.iml
