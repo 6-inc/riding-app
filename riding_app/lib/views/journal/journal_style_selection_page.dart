@@ -4,7 +4,7 @@ import 'package:riding_app/views/journal/journal_timer_page.dart';
 class JournalStyleSelectionPage extends StatelessWidget {
   final Function(String) onStyleSelected;
 
-  JournalStyleSelectionPage({required this.onStyleSelected});
+  const JournalStyleSelectionPage({super.key, required this.onStyleSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +22,7 @@ class JournalStyleSelectionPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text('乗馬スタイルを選択')),
+      appBar: AppBar(title: const Text('乗馬スタイルを選択')),
       body: ListView.builder(
         itemCount: styles.length,
         itemBuilder: (context, index) {

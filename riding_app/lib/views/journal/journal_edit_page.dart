@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/models/journal_entry.dart';
 import 'package:intl/intl.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riding_app/services/journal_service.dart';
+import 'dart:developer';
 
 class JournalEditPage extends StatefulWidget {
   final JournalEntry entry;
-  JournalEditPage({required this.entry});
+  const JournalEditPage({super.key, required this.entry});
 
   @override
-  _JournalEditPageState createState() => _JournalEditPageState();
+  State<JournalEditPage> createState() => _JournalEditPageState();
 }
 
 class _JournalEditPageState extends State<JournalEditPage> {
@@ -23,8 +22,6 @@ class _JournalEditPageState extends State<JournalEditPage> {
   late DateTime _date;
   late TimeOfDay _startTime;
   late TimeOfDay _endTime;
-  PickResult? selectedPlace;
-  static const LatLng _initialPosition = LatLng(35.6895, 139.6917); // 東京
 
   final List<String> _styles = [
     'トレイルライディング',
@@ -85,39 +82,10 @@ class _JournalEditPageState extends State<JournalEditPage> {
     }
   }
 
-  void _pickLocation() async {
-    try {
-      final apiKey = dotenv.env['GOOGLE_API_KEY'];
-      if (apiKey == null || apiKey.isEmpty) {
-        throw Exception('Google API Key is not set');
-      }
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PlacePicker(
-            apiKey: apiKey,
-            initialPosition: _initialPosition,
-            useCurrentLocation: true,
-            onPlacePicked: (result) {
-              setState(() {
-                selectedPlace = result;
-                _locationController.text = result.formattedAddress ?? '';
-              });
-              Navigator.of(context).pop();
-            },
-          ),
-        ),
-      );
-    } catch (e) {
-      print('Error picking location: $e');
-      // エラーメッセージをユーザーに表示するなどの処理を追加
-    }
-  }
-
   void _updateEntry() {
     if (widget.entry.id == null) {
       // IDがnullの場合の処理を追加
-      print('エントリーIDがnullです。更新操作を実行できません。');
+      log('エントリーIDがnullです。更新操作を実行できません。');
       return;
     }
     // 既存の更新処理...
@@ -158,13 +126,13 @@ class _JournalEditPageState extends State<JournalEditPage> {
                     _styleController.text = newValue!;
                   });
                 },
-                decoration: InputDecoration(labelText: 'スタイル'),
+                decoration: const InputDecoration(labelText: 'スタイル'),
               ),
               Row(
                 children: [
                   Text('日付: ${DateFormat('yyyy-MM-dd').format(_date)}'),
                   IconButton(
-                    icon: Icon(Icons.calendar_today),
+                    icon: const Icon(Icons.calendar_today),
                     onPressed: () => _selectDate(context),
                   ),
                 ],
@@ -173,7 +141,7 @@ class _JournalEditPageState extends State<JournalEditPage> {
                 children: [
                   Text('開始時間: ${_startTime.format(context)}'),
                   IconButton(
-                    icon: Icon(Icons.access_time),
+                    icon: const Icon(Icons.access_time),
                     onPressed: () => _selectTime(context, true),
                   ),
                 ],
@@ -182,28 +150,27 @@ class _JournalEditPageState extends State<JournalEditPage> {
                 children: [
                   Text('終了時間: ${_endTime.format(context)}'),
                   IconButton(
-                    icon: Icon(Icons.access_time),
+                    icon: const Icon(Icons.access_time),
                     onPressed: () => _selectTime(context, false),
                   ),
                 ],
               ),
               TextField(
                 controller: _locationController,
-                decoration: InputDecoration(labelText: '場所'),
-                readOnly: true,
-                onTap: _pickLocation,
+                decoration: const InputDecoration(labelText: '場所'),
+                readOnly: false,
               ),
               TextField(
                 controller: _horseController,
-                decoration: InputDecoration(labelText: '馬'),
+                decoration: const InputDecoration(labelText: '馬'),
               ),
               TextField(
                 controller: _titleController,
-                decoration: InputDecoration(labelText: 'タイトル'),
+                decoration: const InputDecoration(labelText: 'タイトル'),
               ),
               TextField(
                 controller: _contentController,
-                decoration: InputDecoration(labelText: '内容'),
+                decoration: const InputDecoration(labelText: '内容'),
               ),
               ElevatedButton(
                 onPressed: _updateEntry,

@@ -3,7 +3,7 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:riding_app/database_helper.dart';
-import 'package:riding_app/widget/grid_lines.dart';
+// import 'package:riding_app/widget/grid_lines.dart';
 import 'package:riding_app/views/journal/journal_list_page.dart';
 import 'package:riding_app/widget/app_bar.dart';
 import 'package:riding_app/views/horse/horse_list_page.dart';
@@ -55,7 +55,7 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
             children: [
               const SizedBox(
                 height: 300,
-                child: const ModelViewer(
+                child: ModelViewer(
                   src: 'assets/models/horse.glb',
                   alt: 'A 3D model of an astronaut',
                   ar: false,
@@ -85,7 +85,7 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
           ),
         ),
       ),
-      JournalListPage(),
+      const JournalListPage(),
       HorseListPage(),
     ];
 

@@ -2,20 +2,20 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:riding_app/views/journal/journal_location_page.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/widgets.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class JournalTimerPage extends StatefulWidget {
   final String style;
   final Function(DateTime, DateTime) onTimeSelected;
 
-  JournalTimerPage({
+  const JournalTimerPage({
+    super.key,
     required this.style,
     required this.onTimeSelected,
   });
 
   @override
-  _JournalTimerPageState createState() => _JournalTimerPageState();
+  State<JournalTimerPage> createState() => _JournalTimerPageState();
 }
 
 class _JournalTimerPageState extends State<JournalTimerPage> {
@@ -61,7 +61,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
     final initialDateTime = isStartTime ? startTime : endTime;
     final pickedTime = await showTimePicker(
       context: context,
-      initialTime: initialDateTime != null ? initialDateTime : TimeOfDay.now(),
+      initialTime: initialDateTime ?? TimeOfDay.now(),
     );
 
     if (pickedTime != null) {
@@ -99,14 +99,14 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('タイマー')),
+      appBar: AppBar(title: const Text('タイマー')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               widget.style,
-              style: TextStyle(fontSize: 18),
+              style: const TextStyle(fontSize: 18),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -116,7 +116,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                   style: const TextStyle(fontSize: 18),
                 ),
                 IconButton(
-                  icon: Icon(Icons.calendar_today, color: Colors.blue),
+                  icon: const Icon(Icons.calendar_today, color: Colors.blue),
                   onPressed: () => _selectDate(context),
                 ),
               ],
@@ -127,7 +127,8 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
               percent: elapsedTime.inSeconds / 3600.0,
               center: Text(
                 _formatElapsedTime(elapsedTime),
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               progressColor: Colors.blue,
             ),
@@ -137,10 +138,10 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 children: [
                   Text(
                     '開始時間: ${_formatTime(startTime!)}',
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
                   IconButton(
-                    icon: Icon(Icons.access_time, color: Colors.blue),
+                    icon: const Icon(Icons.access_time, color: Colors.blue),
                     onPressed: () => _selectDateTime(context, true),
                   ),
                 ],
@@ -151,10 +152,10 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                 children: [
                   Text(
                     '終了時間: ${_formatTime(endTime!)}',
-                    style: TextStyle(fontSize: 18),
+                    style: const TextStyle(fontSize: 18),
                   ),
                   IconButton(
-                    icon: Icon(Icons.access_time, color: Colors.blue),
+                    icon: const Icon(Icons.access_time, color: Colors.blue),
                     onPressed: () => _selectDateTime(context, false),
                   ),
                 ],
@@ -162,7 +163,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
             if (endTime == null)
               ElevatedButton(
                 onPressed: _stopTimer,
-                child: Text('終了'),
+                child: const Text('終了'),
               ),
             if (endTime != null)
               ElevatedButton(
@@ -183,7 +184,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
                     ),
                   );
                 },
-                child: Text('次へ'),
+                child: const Text('次へ'),
               ),
           ],
         ),

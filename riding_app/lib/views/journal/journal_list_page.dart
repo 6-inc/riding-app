@@ -5,6 +5,8 @@ import 'package:riding_app/views/journal/journal_detail_page.dart';
 import 'package:riding_app/views/journal/journal_style_selection_page.dart';
 
 class JournalListPage extends StatelessWidget {
+  const JournalListPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +53,7 @@ class JournalListPage extends StatelessWidget {
             ),
           );
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }

@@ -1,10 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:google_maps_place_picker_mb/google_maps_place_picker.dart';
-import 'package:http/http.dart' as http;
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class JournalLocationPage extends StatefulWidget {
   final String style;
@@ -13,12 +8,12 @@ class JournalLocationPage extends StatefulWidget {
   final Function(String) onLocationSelected;
 
   const JournalLocationPage({
-    Key? key,
+    super.key,
     required this.style,
     required this.startTime,
     required this.endTime,
     required this.onLocationSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<JournalLocationPage> createState() => _JournalLocationPageState();
@@ -26,9 +21,7 @@ class JournalLocationPage extends StatefulWidget {
 
 class _JournalLocationPageState extends State<JournalLocationPage> {
   late final TextEditingController _searchController;
-  PickResult? selectedPlace;
-  static const LatLng _initialPosition = LatLng(35.6895, 139.6917); // 東京
-  List<Map<String, String>> _searchResults = [];
+  final List<Map<String, String>> _searchResults = [];
 
   @override
   void initState() {
@@ -61,13 +54,10 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
                 filled: true,
                 fillColor: Colors.white,
               ),
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16.0,
                 color: Colors.black,
               ),
-              onSubmitted: (value) {
-                _performSearch(value);
-              },
             ),
           ),
           Expanded(
@@ -104,26 +94,5 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
         ),
       ),
     );
-  }
-
-  void _performSearch(String query) async {
-    final apiKey = dotenv.env['GOOGLE_API_KEY'];
-    final url = Uri.parse(
-        'https://maps.googleapis.com/maps/api/place/textsearch/json?query=$query&key=$apiKey&location=${_initialPosition.latitude},${_initialPosition.longitude}&radius=5000');
-
-    final response = await http.get(url);
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        _searchResults = (data['results'] as List).map((place) {
-          return {
-            'name': place['name'] as String,
-            'address': place['formatted_address'] as String,
-          };
-        }).toList();
-      });
-    } else {
-      print('Failed to load places');
-    }
   }
 }
