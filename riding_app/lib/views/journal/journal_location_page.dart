@@ -8,76 +8,24 @@ class JournalLocationPage extends StatefulWidget {
   final Function(String) onLocationSelected;
 
   const JournalLocationPage({
-    super.key,
+    Key? key,
     required this.style,
     required this.startTime,
     required this.endTime,
     required this.onLocationSelected,
-  });
+  }) : super(key: key);
 
   @override
   State<JournalLocationPage> createState() => _JournalLocationPageState();
 }
 
 class _JournalLocationPageState extends State<JournalLocationPage> {
-  late final TextEditingController _searchController;
-  final List<Map<String, String>> _searchResults = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _searchController = TextEditingController();
-  }
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('場所を選択')),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: '場所を検索',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-                filled: true,
-                fillColor: Colors.white,
-              ),
-              style: const TextStyle(
-                fontSize: 16.0,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _searchResults.length,
-              itemBuilder: (context, index) {
-                final place = _searchResults[index];
-                return ListTile(
-                  title: Text(place['name'] ?? 'Unknown'),
-                  subtitle: Text(place['address'] ?? 'No address'),
-                  onTap: () {
-                    _navigateToHorseSelection(place['name'] ?? '');
-                  },
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   void _navigateToHorseSelection(String location) {
@@ -91,6 +39,70 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
           onHorseSelected: (horse) {
             // 馬の選択後の処理
           },
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('ロケーション')),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          // コンテンツの高さに合わせるため、Column の mainAxisSize を min に設定
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 場所入力欄（手動入力）
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: '場所を入力してください',
+                    prefixIcon: const Icon(Icons.location_on),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              // 「次へ」ボタン
+              Center(
+                child: SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      _navigateToHorseSelection(_searchController.text);
+                    },
+                    child: const Text('次へ'),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

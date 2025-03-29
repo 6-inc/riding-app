@@ -76,10 +76,10 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
                   await Provider.of<JournalService>(context, listen: false)
                       .reloadEntries();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('データベースがリセットされました。')),
+                    const SnackBar(content: Text('データがリセットされました。')),
                   );
                 },
-                child: const Text('データベースをリセット'),
+                child: const Text('データをリセット'),
               ),
             ],
           ),
