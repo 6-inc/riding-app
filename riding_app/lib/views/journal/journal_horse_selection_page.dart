@@ -4,6 +4,7 @@ import 'package:riding_app/services/horse_service.dart';
 import 'package:riding_app/views/journal/journal_entry_page.dart';
 import 'package:riding_app/views/horse/horse_add_page.dart';
 import 'dart:io';
+import 'package:riding_app/widget/app_bar.dart';
 
 class JournalHorseSelectionPage extends StatelessWidget {
   final String location;
@@ -19,7 +20,7 @@ class JournalHorseSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('馬を選択')),
+      appBar: const CustomAppBar(title: '馬を選択'),
       body: Consumer<HorseService>(
         builder: (context, horseService, child) {
           final horses = horseService.getHorses();

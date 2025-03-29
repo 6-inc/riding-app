@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_timer_page.dart';
+import 'package:riding_app/widget/app_bar.dart';
 
 class JournalStyleSelectionPage extends StatelessWidget {
   final Function(String) onStyleSelected;
@@ -22,7 +23,7 @@ class JournalStyleSelectionPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('乗馬スタイルを選択')),
+      appBar: const CustomAppBar(title: '乗馬スタイルを選択'),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Padding(
         padding: const EdgeInsets.all(16.0),

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:riding_app/views/journal/journal_location_page.dart';
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:riding_app/widget/app_bar.dart';
 
 class JournalTimerPage extends StatefulWidget {
   final String style;
@@ -99,7 +100,7 @@ class _JournalTimerPageState extends State<JournalTimerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.style)),
+      appBar: CustomAppBar(title: widget.style),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SingleChildScrollView(
         child: Padding(

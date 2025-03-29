@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
+import 'package:riding_app/widget/app_bar.dart';
 
 class JournalLocationPage extends StatefulWidget {
   final String style;
@@ -47,7 +48,7 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('ロケーション')),
+      appBar: const CustomAppBar(title: 'ロケーション'),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Center(
         child: Padding(
