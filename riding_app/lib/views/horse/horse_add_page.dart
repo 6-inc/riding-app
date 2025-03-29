@@ -6,17 +6,18 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:riding_app/widget/app_bar.dart';
 
 class HorseAddPage extends StatefulWidget {
   final Function(String)? onHorseAdded;
 
-  HorseAddPage({this.onHorseAdded});
+  const HorseAddPage({super.key, this.onHorseAdded});
 
   @override
-  _HorseAddPageState createState() => _HorseAddPageState();
+  HorseAddPageState createState() => HorseAddPageState();
 }
 
-class _HorseAddPageState extends State<HorseAddPage> {
+class HorseAddPageState extends State<HorseAddPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _horseNameController = TextEditingController();
   final TextEditingController _breedController = TextEditingController();
@@ -121,9 +122,7 @@ class _HorseAddPageState extends State<HorseAddPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('馬を追加'),
-      ),
+      appBar: const CustomAppBar(title: '馬を追加'),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
@@ -209,9 +208,27 @@ class _HorseAddPageState extends State<HorseAddPage> {
                       ),
                       const SizedBox(height: 20),
                       // 追加ボタン
-                      ElevatedButton(
-                        onPressed: _saveHorse,
-                        child: const Text('追加'),
+                      Center(
+                        child: SizedBox(
+                          width: 200,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.primary,
+                              foregroundColor:
+                                  Theme.of(context).colorScheme.onPrimary,
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 16, horizontal: 24),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              textStyle: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                            ),
+                            onPressed: _saveHorse,
+                            child: const Text('追加'),
+                          ),
+                        ),
                       ),
                     ],
                   ),

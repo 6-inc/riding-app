@@ -11,7 +11,8 @@ class JournalHorseSelectionPage extends StatelessWidget {
   final String style;
   final Function(String) onHorseSelected;
 
-  JournalHorseSelectionPage({
+  const JournalHorseSelectionPage({
+    super.key,
     required this.location,
     required this.style,
     required this.onHorseSelected,
@@ -25,7 +26,7 @@ class JournalHorseSelectionPage extends StatelessWidget {
         builder: (context, horseService, child) {
           final horses = horseService.getHorses();
           if (horses.isEmpty) {
-            return Center(child: Text('馬の登録がありません。'));
+            return const Center(child: Text('馬の登録がありません。'));
           }
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -120,7 +121,7 @@ class JournalHorseSelectionPage extends StatelessWidget {
             Provider.of<HorseService>(context, listen: false).reloadHorses();
           });
         },
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
       ),
     );
   }
