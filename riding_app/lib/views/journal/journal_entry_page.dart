@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:riding_app/services/journal_service.dart';
 import 'package:riding_app/models/journal_entry.dart';
+import 'package:riding_app/widget/app_bar.dart';
 
 class JournalEntryPage extends StatefulWidget {
   final String location;
@@ -11,27 +12,24 @@ class JournalEntryPage extends StatefulWidget {
   final DateTime endTime;
   final Function(String, String) onSave;
 
-  // 既存のコンストラクタ
   const JournalEntryPage({
-    Key? key,
+    super.key,
     required this.location,
     required this.horse,
     required this.style,
     required this.startTime,
     required this.endTime,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
-  _JournalEntryPageState createState() => _JournalEntryPageState();
+  JournalEntryPageState createState() => JournalEntryPageState();
 }
 
-class _JournalEntryPageState extends State<JournalEntryPage> {
-  // 1. タイトル・内容用のコントローラ
+class JournalEntryPageState extends State<JournalEntryPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
-  // 2. 編集可能な変数を State に保持
   late String _style;
   late String _horse;
   late String _location;
@@ -41,7 +39,6 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   @override
   void initState() {
     super.initState();
-    // 3. 受け取った初期値を State へコピー
     _style = widget.style;
     _horse = widget.horse;
     _location = widget.location;
@@ -52,50 +49,96 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('記録')),
+      appBar: const CustomAppBar(title: '記録'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        // 内容が多くなった場合にスクロールできるように
+        // Allows scrolling if content overflows
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 16),
-            TextField(
-              controller: _titleController,
-              decoration: const InputDecoration(labelText: 'タイトル'),
-            ),
-            Expanded(
-              child: TextField(
-                controller: _contentController,
-                decoration: const InputDecoration(
-                  labelText: '今回の乗馬はどうでしたか？',
-                  alignLabelWithHint: true,
+            // Title input field in a Card
+            Card(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 4), // reduced vertical padding
+                child: TextField(
+                  controller: _titleController,
+                  textAlign: TextAlign.start,
+                  decoration: const InputDecoration(
+                    labelText: 'タイトル',
+                    border: InputBorder.none,
+                  ),
+                  style: const TextStyle(fontSize: 16),
                 ),
-                maxLines: null,
-                expands: true,
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Content input field in a Card with a fixed height
+            SizedBox(
+              height: 200, // fixed height for the content text box
+              child: Card(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 8), // reduced vertical padding
+                  child: TextField(
+                    controller: _contentController,
+                    decoration: const InputDecoration(
+                      labelText: '今回の乗馬はどうでしたか？',
+                      alignLabelWithHint: true,
+                      border: InputBorder.none,
+                    ),
+                    maxLines: null,
+                    // Removed expands property so that the height remains fixed
+                    textAlignVertical: TextAlignVertical.top,
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                // 5. 保存ボタン押下時に、State にある最新値を addEntry に渡す
-                final newEntry = JournalEntry(
-                  title: _titleController.text,
-                  content: _contentController.text,
-                  style: _style,
-                  date: _startTime,
-                  startTime: _startTime,
-                  endTime: _endTime,
-                  location: _location,
-                  horse: _horse,
-                );
-                Provider.of<JournalService>(context, listen: false)
-                    .addEntry(newEntry);
-
-                // メイン画面へ戻る
-                Navigator.popUntil(context, ModalRoute.withName('/'));
-              },
-              child: const Text('保存'),
+            Center(
+              child: SizedBox(
+                width: 200,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () {
+                    final newEntry = JournalEntry(
+                      title: _titleController.text,
+                      content: _contentController.text,
+                      style: _style,
+                      date: _startTime,
+                      startTime: _startTime,
+                      endTime: _endTime,
+                      location: _location,
+                      horse: _horse,
+                    );
+                    Provider.of<JournalService>(context, listen: false)
+                        .addEntry(newEntry);
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                  child: const Text('保存'),
+                ),
+              ),
             ),
           ],
         ),
