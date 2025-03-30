@@ -17,7 +17,7 @@ class JournalListPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.background,
       body: Consumer<JournalService>(
         builder: (context, journalService, child) {
-          final entries = journalService.getEntries();
+          final entries = journalService.getEntries().reversed.toList();
           if (entries.isEmpty) {
             return Center(
               child: Text(
