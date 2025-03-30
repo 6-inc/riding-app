@@ -21,7 +21,7 @@ class JournalService extends ChangeNotifier {
               startTime: DateTime.parse(map['startTime']),
               endTime: DateTime.parse(map['endTime']),
               location: map['location'],
-              horse: map['horse'],
+              horseId: map['horseId'],
             ))
         .toList();
     notifyListeners();
@@ -37,7 +37,7 @@ class JournalService extends ChangeNotifier {
       'startTime': entry.startTime.toIso8601String(),
       'endTime': entry.endTime.toIso8601String(),
       'location': entry.location,
-      'horse': entry.horse,
+      'horseId': entry.horseId,
     });
     notifyListeners();
   }
@@ -69,7 +69,7 @@ class JournalService extends ChangeNotifier {
       'startTime': entry.startTime.toIso8601String(),
       'endTime': entry.endTime.toIso8601String(),
       'location': entry.location,
-      'horse': entry.horse,
+      'horseId': entry.horseId,
     });
     await _loadEntriesFromDatabase();
     notifyListeners();

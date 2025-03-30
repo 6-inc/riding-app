@@ -19,7 +19,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'riding_app.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2, // バージョンを上げる
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -56,12 +56,22 @@ class DatabaseHelper {
         startTime TEXT,
         endTime TEXT,
         location TEXT,
-        horse TEXT
+        horseId INTEGER,
+        FOREIGN KEY (horseId) REFERENCES horses (id)
       )
     ''');
   }
 
-  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {}
+  // 既存のデータベースがある場合はアップグレード処理で修正する
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        ALTER TABLE journal_entries ADD COLUMN horseId INTEGER REFERENCES horses (id);
+      ''');
+
+      // 古いhorseカラムがあれば削除（オプション。SQLiteでは直接削除できないため、実際にはテーブル再作成が必要）
+    }
+  }
 
   Future<int> insertHorse(Map<String, dynamic> horse) async {
     final db = await database;

@@ -4,6 +4,9 @@ import 'package:intl/intl.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:riding_app/services/journal_service.dart';
 import 'dart:developer';
+import 'package:riding_app/models/horse.dart';
+import 'package:provider/provider.dart';
+import 'package:riding_app/services/horse_service.dart';
 
 class JournalEditPage extends StatefulWidget {
   final JournalEntry entry;
@@ -46,7 +49,11 @@ class _JournalEditPageState extends State<JournalEditPage> {
     _contentController = TextEditingController(text: widget.entry.content);
     _styleController = TextEditingController(text: widget.entry.style);
     _locationController = TextEditingController(text: widget.entry.location);
-    _horseController = TextEditingController(text: widget.entry.horse);
+    _horseController = TextEditingController(
+        text: Provider.of<HorseService>(context, listen: false)
+                .getHorseById(widget.entry.horseId)
+                ?.name ??
+            '');
     _date = widget.entry.date;
     _startTime = TimeOfDay.fromDateTime(widget.entry.startTime);
     _endTime = TimeOfDay.fromDateTime(widget.entry.endTime);
@@ -84,11 +91,14 @@ class _JournalEditPageState extends State<JournalEditPage> {
 
   void _updateEntry() {
     if (widget.entry.id == null) {
-      // IDがnullの場合の処理を追加
       log('エントリーIDがnullです。更新操作を実行できません。');
       return;
     }
-    // 既存の更新処理...
+
+    final horse = Horse(
+      name: _horseController.text,
+    );
+
     journalService.updateEntry(JournalEntry(
       id: widget.entry.id,
       title: _titleController.text,
@@ -100,7 +110,7 @@ class _JournalEditPageState extends State<JournalEditPage> {
       endTime: DateTime(
           _date.year, _date.month, _date.day, _endTime.hour, _endTime.minute),
       location: _locationController.text,
-      horse: _horseController.text,
+      horseId: horse.id!,
     ));
   }
 

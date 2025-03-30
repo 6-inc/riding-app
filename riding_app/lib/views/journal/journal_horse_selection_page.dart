@@ -5,16 +5,21 @@ import 'package:riding_app/views/journal/journal_entry_page.dart';
 import 'package:riding_app/views/horse/horse_add_page.dart';
 import 'dart:io';
 import 'package:riding_app/widget/app_bar.dart';
+import 'package:riding_app/models/horse.dart';
 
 class JournalHorseSelectionPage extends StatelessWidget {
   final String location;
   final String style;
-  final Function(String) onHorseSelected;
+  final DateTime startTime;
+  final DateTime endTime;
+  final Function(Horse) onHorseSelected;
 
   const JournalHorseSelectionPage({
     super.key,
     required this.location,
     required this.style,
+    required this.startTime,
+    required this.endTime,
     required this.onHorseSelected,
   });
 
@@ -42,16 +47,16 @@ class JournalHorseSelectionPage extends StatelessWidget {
                 margin: const EdgeInsets.all(8.0),
                 child: InkWell(
                   onTap: () {
-                    onHorseSelected(horse.name);
+                    onHorseSelected(horse);
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => JournalEntryPage(
                           location: location,
-                          horse: horse.name,
+                          horse: horse,
                           style: style,
-                          startTime: DateTime.now(),
-                          endTime: DateTime.now(),
+                          startTime: startTime,
+                          endTime: endTime,
                           onSave: (title, content) {
                             // 保存処理をここに追加
                           },
@@ -93,20 +98,20 @@ class JournalHorseSelectionPage extends StatelessWidget {
             context,
             MaterialPageRoute(
               builder: (context) => HorseAddPage(
-                onHorseAdded: (horseName) {
-                  // 馬が追加された後にリストを更新
+                onHorseAdded: (String horseName) {
+                  // Horse型のインスタンスを生成
+                  Horse horse = Horse(name: horseName);
                   Navigator.pop(context);
-                  onHorseSelected(horseName);
-                  // 追加した馬を選択してエントリー詳細画面に遷移
+                  onHorseSelected(horse);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => JournalEntryPage(
                         location: location,
-                        horse: horseName,
+                        horse: horse,
                         style: style,
-                        startTime: DateTime.now(),
-                        endTime: DateTime.now(),
+                        startTime: startTime,
+                        endTime: endTime,
                         onSave: (title, content) {
                           // 保存処理をここに追加
                         },

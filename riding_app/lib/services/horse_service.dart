@@ -61,7 +61,6 @@ class HorseService extends ChangeNotifier {
     if (horse.id == null) {
       throw ArgumentError('Horse ID cannot be null for update operation');
     }
-    print('Updating horse with ID: \\${horse.id}');
     await _dbHelper.updateHorse({
       'id': horse.id,
       'name': horse.name,
@@ -71,12 +70,21 @@ class HorseService extends ChangeNotifier {
       'color': horse.color,
       'imageUrl': horse.imageUrl,
     });
-    print('Horse updated: \\${horse.toString()}');
+    print('Horse updated: ${horse.toString()}');
     await _loadHorsesFromDatabase();
     notifyListeners();
   }
 
   Future<void> loadHorses() async {
     await _loadHorsesFromDatabase();
+  }
+
+  Horse? getHorseById(int id) {
+    try {
+      return _horses.firstWhere((horse) => horse.id == id);
+    } catch (e) {
+      print('Horse with ID $id not found.');
+      return null;
+    }
   }
 }

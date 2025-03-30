@@ -5,6 +5,8 @@ import 'package:riding_app/services/journal_service.dart';
 import 'package:riding_app/views/journal/journal_detail_page.dart';
 import 'package:riding_app/views/journal/journal_style_selection_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:riding_app/services/horse_service.dart';
+import 'package:riding_app/models/horse.dart';
 
 class JournalListPage extends StatelessWidget {
   const JournalListPage({super.key});
@@ -25,9 +27,10 @@ class JournalListPage extends StatelessWidget {
             );
           }
 
-          // Formatter for date and time
           final dateFormatter = DateFormat('yyyy/MM/dd');
           final timeFormatter = DateFormat('HH:mm');
+          final horseService =
+              Provider.of<HorseService>(context, listen: false);
 
           return ListView.builder(
             padding: const EdgeInsets.all(16),
@@ -35,94 +38,103 @@ class JournalListPage extends StatelessWidget {
             itemBuilder: (context, index) {
               final entry = entries[index];
 
-              // Display the first 30 characters of the content
               String snippet = entry.content;
               if (snippet.length > 30) {
                 snippet = snippet.substring(0, 30) + '...';
               }
 
-              // Format date and time strings
               final dateString = dateFormatter.format(entry.date);
-              final startTimeString = timeFormatter.format(entry.startTime);
-              final endTimeString = timeFormatter.format(entry.endTime);
+              final startTimeString =
+                  timeFormatter.format(entry.startTime.toLocal());
+              final endTimeString =
+                  timeFormatter.format(entry.endTime.toLocal());
 
-              return Card(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                margin: const EdgeInsets.symmetric(vertical: 8.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                elevation: 4,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(12),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => JournalDetailPage(entry: entry),
-                      ),
-                    );
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title with date (top-right) and time (below date)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              return FutureBuilder<Horse?>(
+                future: Future(() => horseService.getHorseById(entry.horseId)),
+                builder: (context, snapshot) {
+                  final horseName = snapshot.data?.name ?? '馬情報なし';
+
+                  return Card(
+                    color: Theme.of(context).colorScheme.surfaceVariant,
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                JournalDetailPage(entry: entry),
+                          ),
+                        );
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Expanded(
-                              child: Text(
-                                entry.title,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.bold),
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  dateString,
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                Expanded(
+                                  child: Text(
+                                    entry.title,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      dateString,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                    Text(
+                                      '$startTimeString - $endTimeString',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Icon(
+                                  FontAwesomeIcons.horseHead,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 20,
+                                ),
+                                const SizedBox(width: 4),
                                 Text(
-                                  '$startTimeString - $endTimeString',
+                                  horseName,
                                   style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        // Horse icon and horse name
-                        Row(
-                          children: [
-                            Icon(
-                              FontAwesomeIcons.horseHead,
-                              color: Theme.of(context).colorScheme.primary,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 4),
+                            const SizedBox(height: 8),
                             Text(
-                              entry.horse,
+                              snippet,
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        // Content snippet
-                        Text(
-                          snippet,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
             },
           );
@@ -130,7 +142,6 @@ class JournalListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Navigate to the style selection page for adding a new entry.
           Navigator.push(
             context,
             MaterialPageRoute(

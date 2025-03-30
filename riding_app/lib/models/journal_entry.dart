@@ -6,7 +6,8 @@ class JournalEntry {
   final DateTime startTime;
   final DateTime endTime;
   final String location;
-  final String horse;
+  final int horseId;
+  final String? horseImageUrl;
   final int? id;
 
   JournalEntry({
@@ -17,7 +18,8 @@ class JournalEntry {
     required this.startTime,
     required this.endTime,
     required this.location,
-    required this.horse,
+    required this.horseId,
+    this.horseImageUrl,
     this.id,
   });
 

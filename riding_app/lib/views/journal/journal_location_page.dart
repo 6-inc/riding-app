@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 import 'package:riding_app/widget/app_bar.dart';
+import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 
 class JournalLocationPage extends StatefulWidget {
   final String style;
@@ -9,12 +9,12 @@ class JournalLocationPage extends StatefulWidget {
   final Function(String) onLocationSelected;
 
   const JournalLocationPage({
-    Key? key,
+    super.key,
     required this.style,
     required this.startTime,
     required this.endTime,
     required this.onLocationSelected,
-  }) : super(key: key);
+  });
 
   @override
   State<JournalLocationPage> createState() => _JournalLocationPageState();
@@ -37,6 +37,8 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
         builder: (context) => JournalHorseSelectionPage(
           location: location,
           style: widget.style,
+          startTime: widget.startTime,
+          endTime: widget.endTime,
           onHorseSelected: (horse) {
             // 馬の選択後の処理
           },
@@ -53,11 +55,9 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          // コンテンツの高さに合わせるため、Column の mainAxisSize を min に設定
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 場所入力欄（手動入力）
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
@@ -79,7 +79,6 @@ class _JournalLocationPageState extends State<JournalLocationPage> {
                 ),
               ),
               const SizedBox(height: 32),
-              // 「次へ」ボタン
               Center(
                 child: SizedBox(
                   width: 200,
