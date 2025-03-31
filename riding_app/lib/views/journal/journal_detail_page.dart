@@ -130,27 +130,72 @@ class JournalDetailPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Content Section
-                  const Text(
-                    '内容',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Colors.blue,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  // Content Section (without the "内容" title)
                   Text(
                     entry.content,
-                    style: const TextStyle(fontSize: 16),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 16),
-                  // Date, Time, Location, and Style Section
-                  _buildDetailRow('日付', dateFormatter.format(entry.date)),
-                  _buildDetailRow('開始時間', startTimeString),
-                  _buildDetailRow('終了時間', endTimeString),
-                  _buildDetailRow('場所', entry.location),
-                  _buildDetailRow('スタイル', entry.style),
+                  Divider(),
+                  const SizedBox(height: 16),
+                  // Date & Time Section
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.calendar_today,
+                              color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 4),
+                          Text(
+                            dateFormatter.format(entry.date),
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.access_time,
+                              color: Theme.of(context).colorScheme.primary),
+                          const SizedBox(width: 4),
+                          Text(
+                            '$startTimeString - $endTimeString',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  // Location Section with Icon
+                  Row(
+                    children: [
+                      Icon(Icons.location_on,
+                          color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          entry.location,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  // Style Section with Icon
+                  Row(
+                    children: [
+                      Icon(Icons.style,
+                          color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          entry.style,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
