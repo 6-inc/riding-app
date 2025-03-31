@@ -52,6 +52,26 @@ class JournalListPage extends StatelessWidget {
               return FutureBuilder<Horse?>(
                 future: Future(() => horseService.getHorseById(entry.horseId)),
                 builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Card(
+                      color: Theme.of(context).colorScheme.surfaceVariant,
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text(
+                            '読み込み中…',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+
                   final horseName = snapshot.data?.name ?? '馬情報なし';
 
                   return Card(
