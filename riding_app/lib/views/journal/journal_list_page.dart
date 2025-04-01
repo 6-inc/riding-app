@@ -6,7 +6,6 @@ import 'package:riding_app/views/journal/journal_detail_page.dart';
 import 'package:riding_app/views/journal/journal_style_selection_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:riding_app/services/horse_service.dart';
-import 'package:riding_app/models/horse.dart';
 
 class JournalListPage extends StatelessWidget {
   const JournalListPage({super.key});
@@ -29,8 +28,6 @@ class JournalListPage extends StatelessWidget {
 
           final dateFormatter = DateFormat('yyyy/MM/dd');
           final timeFormatter = DateFormat('HH:mm');
-          final horseService =
-              Provider.of<HorseService>(context, listen: false);
 
           return ListView.builder(
             padding: const EdgeInsets.all(16),
@@ -49,30 +46,11 @@ class JournalListPage extends StatelessWidget {
               final endTimeString =
                   timeFormatter.format(entry.endTime.toLocal());
 
-              return FutureBuilder<Horse?>(
-                future: Future(() => horseService.getHorseById(entry.horseId)),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Card(
-                      color: Theme.of(context).colorScheme.surfaceVariant,
-                      margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 4,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Center(
-                          child: Text(
-                            '読み込み中…',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                  final horseName = snapshot.data?.name ?? '馬情報なし';
+              // Consumer を使用して HorseService の変更を監視
+              return Consumer<HorseService>(
+                builder: (context, horseService, child) {
+                  final horse = horseService.getHorseById(entry.horseId);
+                  final horseName = horse?.name ?? '馬情報なし';
 
                   return Card(
                     color: Theme.of(context).colorScheme.surfaceVariant,

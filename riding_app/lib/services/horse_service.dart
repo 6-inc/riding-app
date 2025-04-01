@@ -48,6 +48,14 @@ class HorseService extends ChangeNotifier {
     return _horses;
   }
 
+  Future<List<Horse>> getAllHorses() async {
+    // Ensure horses are loaded before returning
+    if (_horses.isEmpty) {
+      await _loadHorsesFromDatabase();
+    }
+    return _horses;
+  }
+
   Future<void> resetHorses() async {
     _horses.clear();
     notifyListeners();

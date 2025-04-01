@@ -14,6 +14,7 @@ class JournalService extends ChangeNotifier {
     final entryMaps = await _dbHelper.getJournalEntries();
     _entries = entryMaps
         .map((map) => JournalEntry(
+              id: map['id'],
               title: map['title'],
               content: map['content'],
               style: map['style'],
@@ -28,8 +29,8 @@ class JournalService extends ChangeNotifier {
   }
 
   Future<void> addEntry(JournalEntry entry) async {
-    _entries.add(entry);
-    await _dbHelper.insertJournalEntry({
+    // DBに登録し、新規発行されたIDを取得する
+    final newId = await _dbHelper.insertJournalEntry({
       'title': entry.title,
       'content': entry.content,
       'style': entry.style,
@@ -39,6 +40,9 @@ class JournalService extends ChangeNotifier {
       'location': entry.location,
       'horseId': entry.horseId,
     });
+    // 新規IDをエントリーに設定
+    entry.id = newId;
+    _entries.add(entry);
     notifyListeners();
   }
 

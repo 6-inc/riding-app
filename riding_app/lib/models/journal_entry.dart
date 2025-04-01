@@ -1,4 +1,5 @@
 class JournalEntry {
+  int? id;
   final String title;
   final String content;
   final String style;
@@ -8,9 +9,9 @@ class JournalEntry {
   final String location;
   final int horseId;
   final String? horseImageUrl;
-  final int? id;
 
   JournalEntry({
+    this.id,
     required this.title,
     required this.content,
     required this.style,
@@ -20,7 +21,6 @@ class JournalEntry {
     required this.location,
     required this.horseId,
     this.horseImageUrl,
-    this.id,
   });
 
   // 他のメソッドやフィールドがある場合はここに追加
