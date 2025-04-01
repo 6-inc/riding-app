@@ -364,65 +364,33 @@ class _JournalEditPageState extends State<JournalEditPage> {
                           fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     onPressed: () async {
-                      // 判定条件：エントリーIDが null または 0 の場合は新規作成、それ以外は更新
-                      if (widget.entry.id == null || widget.entry.id == 0) {
-                        // 新規エントリーの場合は追加
-                        final newEntry = JournalEntry(
-                          title: _titleController.text,
-                          content: _contentController.text,
-                          style: _styleController.text,
-                          date: _date,
-                          startTime: DateTime(
-                            _date.year,
-                            _date.month,
-                            _date.day,
-                            _startTime.hour,
-                            _startTime.minute,
-                          ),
-                          endTime: DateTime(
-                            _date.year,
-                            _date.month,
-                            _date.day,
-                            _endTime.hour,
-                            _endTime.minute,
-                          ),
-                          location: _locationController.text,
-                          horseId: _selectedHorse?.id ?? 0,
-                        );
-                        await Provider.of<JournalService>(context,
-                                listen: false)
-                            .addEntry(newEntry);
-                        Navigator.pop(context, newEntry);
-                      } else {
-                        // 既存エントリーの場合は更新
-                        final updatedEntry = JournalEntry(
-                          id: widget.entry.id,
-                          title: _titleController.text,
-                          content: _contentController.text,
-                          style: _styleController.text,
-                          date: _date,
-                          startTime: DateTime(
-                            _date.year,
-                            _date.month,
-                            _date.day,
-                            _startTime.hour,
-                            _startTime.minute,
-                          ),
-                          endTime: DateTime(
-                            _date.year,
-                            _date.month,
-                            _date.day,
-                            _endTime.hour,
-                            _endTime.minute,
-                          ),
-                          location: _locationController.text,
-                          horseId: _selectedHorse?.id ?? widget.entry.horseId,
-                        );
-                        await Provider.of<JournalService>(context,
-                                listen: false)
-                            .updateEntry(updatedEntry);
-                        Navigator.pop(context, updatedEntry);
-                      }
+                      // 既存エントリーの場合は更新処理のみを実施
+                      final updatedEntry = JournalEntry(
+                        id: widget.entry.id, // 既存のIDをそのまま利用
+                        title: _titleController.text,
+                        content: _contentController.text,
+                        style: _styleController.text,
+                        date: _date,
+                        startTime: DateTime(
+                          _date.year,
+                          _date.month,
+                          _date.day,
+                          _startTime.hour,
+                          _startTime.minute,
+                        ),
+                        endTime: DateTime(
+                          _date.year,
+                          _date.month,
+                          _date.day,
+                          _endTime.hour,
+                          _endTime.minute,
+                        ),
+                        location: _locationController.text,
+                        horseId: _selectedHorse?.id ?? widget.entry.horseId,
+                      );
+                      await Provider.of<JournalService>(context, listen: false)
+                          .updateEntry(updatedEntry);
+                      Navigator.pop(context, updatedEntry);
                     },
                     child: const Text('保存'),
                   ),

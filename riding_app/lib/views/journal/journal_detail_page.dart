@@ -7,21 +7,32 @@ import 'package:provider/provider.dart';
 import 'package:riding_app/services/horse_service.dart';
 import 'dart:io';
 
-class JournalDetailPage extends StatelessWidget {
+class JournalDetailPage extends StatefulWidget {
   final JournalEntry entry;
 
-  const JournalDetailPage({super.key, required this.entry});
+  const JournalDetailPage({Key? key, required this.entry}) : super(key: key);
+
+  @override
+  _JournalDetailPageState createState() => _JournalDetailPageState();
+}
+
+class _JournalDetailPageState extends State<JournalDetailPage> {
+  late JournalEntry entry;
+
+  @override
+  void initState() {
+    super.initState();
+    entry = widget.entry;
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Formatters for date and time
     final dateFormatter = DateFormat('yyyy年MM月dd日');
     final timeFormatter = DateFormat('HH:mm');
 
-    // 馬の情報を取得
+    // 馬情報の取得（更新があれば最新の情報を反映させる）
     final horse = Provider.of<HorseService>(context, listen: false)
         .getHorseById(entry.horseId);
-
     final startTimeString = timeFormatter.format(entry.startTime.toLocal());
     final endTimeString = timeFormatter.format(entry.endTime.toLocal());
 
@@ -31,13 +42,19 @@ class JournalDetailPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(
+            onPressed: () async {
+              // 編集画面へ遷移し、戻り値として更新済みエントリーを受け取る
+              final updatedEntry = await Navigator.push<JournalEntry>(
                 context,
                 MaterialPageRoute(
                   builder: (context) => JournalEditPage(entry: entry),
                 ),
               );
+              if (updatedEntry != null) {
+                setState(() {
+                  entry = updatedEntry;
+                });
+              }
             },
           ),
         ],
@@ -46,7 +63,6 @@ class JournalDetailPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          // Using Card without an overridden background so it uses default styling.
           child: Card(
             elevation: 4,
             shape: RoundedRectangleBorder(
@@ -57,11 +73,10 @@ class JournalDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header: Title and Horse Image/Name
+                  // ヘッダー：タイトルと馬の画像・名前
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Title
                       Expanded(
                         child: Text(
                           entry.title,
@@ -72,7 +87,6 @@ class JournalDetailPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Horse Image and Name
                       Column(
                         children: [
                           CircleAvatar(
@@ -90,9 +104,6 @@ class JournalDetailPage extends StatelessWidget {
                                     size: 30,
                                   )
                                 : null,
-                            onBackgroundImageError: (exception, stackTrace) {
-                              print('画像の読み込みに失敗しました: $exception');
-                            },
                           ),
                           const SizedBox(height: 4),
                           Text(
@@ -104,15 +115,15 @@ class JournalDetailPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Content Section (without the "内容" title)
+                  // コンテンツ
                   Text(
                     entry.content,
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 16),
-                  Divider(),
+                  const Divider(),
                   const SizedBox(height: 16),
-                  // Date & Time Section
+                  // 日付＆時間セクション
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -141,7 +152,7 @@ class JournalDetailPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  // Location Section with Icon
+                  // 場所セクション
                   Row(
                     children: [
                       Icon(Icons.location_on,
@@ -156,7 +167,7 @@ class JournalDetailPage extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  // Style Section with Icon
+                  // スタイルセクション
                   Row(
                     children: [
                       Icon(Icons.style,
