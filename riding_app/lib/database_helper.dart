@@ -19,8 +19,9 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'riding_app.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 3,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
   }
 
@@ -29,8 +30,10 @@ class DatabaseHelper {
       CREATE TABLE horses (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
+        color TEXT,
         breed TEXT,
-        age INTEGER
+        birthDate TEXT,
+        note TEXT
       )
     ''');
     await db.execute('''
@@ -42,6 +45,40 @@ class DatabaseHelper {
         FOREIGN KEY (horseId) REFERENCES horses (id)
       )
     ''');
+    await db.execute('''
+      CREATE TABLE journal_entries (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT,
+        content TEXT,
+        style TEXT,
+        startTime TEXT,
+        endTime TEXT,
+        location TEXT,
+        horse TEXT
+      )
+    ''');
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 3) {
+      await db.execute('''
+        ALTER TABLE horses ADD COLUMN color TEXT
+      ''');
+    }
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE journal_entries (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          content TEXT,
+          style TEXT,
+          startTime TEXT,
+          endTime TEXT,
+          location TEXT,
+          horse TEXT
+        )
+      ''');
+    }
   }
 
   Future<int> insertHorse(Map<String, dynamic> horse) async {
@@ -73,5 +110,38 @@ class DatabaseHelper {
     );
   }
 
-  // Similar methods for riding_records
+  Future<int> insertJournalEntry(Map<String, dynamic> entry) async {
+    final db = await database;
+    return await db.insert('journal_entries', entry);
+  }
+
+  Future<List<Map<String, dynamic>>> getJournalEntries() async {
+    final db = await database;
+    return await db.query('journal_entries');
+  }
+
+  Future<int> updateJournalEntry(Map<String, dynamic> entry) async {
+    final db = await database;
+    return await db.update(
+      'journal_entries',
+      entry,
+      where: 'id = ?',
+      whereArgs: [entry['id']],
+    );
+  }
+
+  Future<int> deleteJournalEntry(int id) async {
+    final db = await database;
+    return await db.delete(
+      'journal_entries',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<void> resetDatabase() async {
+    String path = join(await getDatabasesPath(), 'riding_app.db');
+    await deleteDatabase(path);
+    _database = null;
+  }
 }

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:riding_app/services/journal_service.dart';
 import 'package:riding_app/views/journal/journal_detail_page.dart';
 import 'package:riding_app/views/journal/journal_style_selection_page.dart';
-import 'package:riding_app/views/journal/journal_add_page.dart';
 
 class JournalListPage extends StatelessWidget {
   @override
@@ -36,18 +35,12 @@ class JournalListPage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // 新しいエントリーを追加するためのページに遷移
           Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => JournalStyleSelectionPage(
-                onStyleSelected: (style) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => JournalAddPage(),
-                    ),
-                  );
-                },
+                onStyleSelected: (style) {},
               ),
             ),
           );

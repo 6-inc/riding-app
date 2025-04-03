@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_timer_page.dart';
-import 'package:riding_app/views/journal/journal_location_page.dart';
-import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 
 class JournalStyleSelectionPage extends StatelessWidget {
   final Function(String) onStyleSelected;
@@ -31,32 +29,15 @@ class JournalStyleSelectionPage extends StatelessWidget {
           return ListTile(
             title: Text(styles[index]),
             onTap: () {
-              onStyleSelected(styles[index]);
+              final selectedStyle = styles[index];
+              onStyleSelected(selectedStyle);
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => JournalTimerPage(
+                    style: selectedStyle,
                     onTimeSelected: (start, end) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => JournalLocationPage(
-                            onLocationSelected: (location) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      JournalHorseSelectionPage(
-                                    onHorseSelected: (horse) {
-                                      // スタイル名を渡す
-                                    },
-                                  ),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      );
+                      // 時間選択後の処理
                     },
                   ),
                 ),
