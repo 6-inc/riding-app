@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:riding_app/widget/app_bar.dart';
 import 'package:riding_app/views/journal/journal_horse_selection_page.dart';
 
-class JournalLocationPage extends StatelessWidget {
+class JournalLocationPage extends StatefulWidget {
   final String style;
   final DateTime startTime;
   final DateTime endTime;
   final Function(String) onLocationSelected;
 
-  JournalLocationPage({
+  const JournalLocationPage({
+    super.key,
     required this.style,
     required this.startTime,
     required this.endTime,
@@ -15,48 +17,92 @@ class JournalLocationPage extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController _locationController = TextEditingController();
+  State<JournalLocationPage> createState() => _JournalLocationPageState();
+}
 
-    void _navigateToHorseSelection(String location) {
-      onLocationSelected(location);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => JournalHorseSelectionPage(
-            location: location,
-            style: style,
-            onHorseSelected: (horse) {
-              // 馬の選択後の処理を追加
-            },
-          ),
+class _JournalLocationPageState extends State<JournalLocationPage> {
+  final TextEditingController _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _navigateToHorseSelection(String location) {
+    widget.onLocationSelected(location);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => JournalHorseSelectionPage(
+          location: location,
+          style: widget.style,
+          startTime: widget.startTime,
+          endTime: widget.endTime,
+          onHorseSelected: (horse) {
+            // 馬の選択後の処理
+          },
         ),
-      );
-    }
+      ),
+    );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('場所を入力')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              controller: _locationController,
-              decoration: InputDecoration(labelText: '場所'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _navigateToHorseSelection(_locationController.text);
-              },
-              child: Text('次へ'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                _navigateToHorseSelection('Location Skipped');
-              },
-              child: Text('スキップ'),
-            ),
-          ],
+      appBar: const CustomAppBar(title: 'ロケーション'),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextField(
+                  controller: _searchController,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                    hintText: '場所を入力してください',
+                    prefixIcon: const Icon(Icons.location_on),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.0),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                  ),
+                  style: const TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 32),
+              Center(
+                child: SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 24),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      textStyle: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      _navigateToHorseSelection(_searchController.text);
+                    },
+                    child: const Text('次へ'),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

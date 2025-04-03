@@ -1,40 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:riding_app/services/journal_service.dart';
-import 'package:intl/intl.dart';
 import 'package:riding_app/models/journal_entry.dart';
+import 'package:riding_app/widget/app_bar.dart';
+import 'package:riding_app/models/horse.dart';
 
 class JournalEntryPage extends StatefulWidget {
   final String location;
-  final String horse;
+  final Horse horse;
   final String style;
   final DateTime startTime;
   final DateTime endTime;
   final Function(String, String) onSave;
 
-  // 既存のコンストラクタ
   const JournalEntryPage({
-    Key? key,
+    super.key,
     required this.location,
     required this.horse,
     required this.style,
     required this.startTime,
     required this.endTime,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
-  _JournalEntryPageState createState() => _JournalEntryPageState();
+  JournalEntryPageState createState() => JournalEntryPageState();
 }
 
-class _JournalEntryPageState extends State<JournalEntryPage> {
-  // 1. タイトル・内容用のコントローラ
+class JournalEntryPageState extends State<JournalEntryPage> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
 
-  // 2. 編集可能な変数を State に保持
   late String _style;
-  late String _horse;
+  late Horse _horse;
   late String _location;
   late DateTime _startTime;
   late DateTime _endTime;
@@ -42,7 +40,6 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   @override
   void initState() {
     super.initState();
-    // 3. 受け取った初期値を State へコピー
     _style = widget.style;
     _horse = widget.horse;
     _location = widget.location;
@@ -53,265 +50,101 @@ class _JournalEntryPageState extends State<JournalEntryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('エントリー詳細')),
+      appBar: const CustomAppBar(title: '記録'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          // 内容が多くなった場合にスクロールできるように
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // 4. 各項目ごとに編集ボタン付きの行を表示
-              _buildEditableField(
-                'スタイル',
-                _style,
-                _editStyle,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Card(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              elevation: 4,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              _buildEditableField(
-                '馬',
-                _horse,
-                _editHorse,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: TextField(
+                  controller: _titleController,
+                  decoration: const InputDecoration(
+                    labelText: 'タイトル',
+                    border: InputBorder.none,
+                  ),
+                ),
               ),
-              _buildEditableField(
-                '場所',
-                _location,
-                _editLocation,
+            ),
+            const SizedBox(height: 16),
+            SizedBox(
+              height: 200,
+              child: Card(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  child: TextField(
+                    controller: _contentController,
+                    decoration: const InputDecoration(
+                      labelText: '今回の乗馬はどうでしたか？',
+                      alignLabelWithHint: true,
+                      border: InputBorder.none,
+                    ),
+                    maxLines: null,
+                  ),
+                ),
               ),
-              _buildEditableField(
-                '開始時間',
-                _formatDateTime(_startTime),
-                _editStartTime,
-              ),
-              _buildEditableField(
-                '終了時間',
-                _formatDateTime(_endTime),
-                _editEndTime,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _titleController,
-                decoration: const InputDecoration(labelText: 'タイトル'),
-              ),
-              TextField(
-                controller: _contentController,
-                decoration: const InputDecoration(labelText: '内容'),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton(
-                onPressed: () {
-                  // 5. 保存ボタン押下時に、State にある最新値を addEntry に渡す
-                  final newEntry = JournalEntry(
-                    title: _titleController.text,
-                    content: _contentController.text,
-                    style: _style,
-                    horse: _horse,
-                    location: _location,
-                    startTime: _startTime,
-                    endTime: _endTime,
-                  );
-                  Provider.of<JournalService>(context, listen: false)
-                      .addEntry(newEntry);
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: SizedBox(
+                width: 200,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    textStyle: const TextStyle(
+                        fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  onPressed: () async {
+                    if (_horse.id == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('選択された馬が無効です')),
+                      );
+                      return;
+                    }
 
-                  // 必要があれば、onSave コールバックを呼び出す
-                  // widget.onSave(_titleController.text, _contentController.text);
+                    final newEntry = JournalEntry(
+                      title: _titleController.text,
+                      content: _contentController.text,
+                      style: _style,
+                      date: _startTime,
+                      startTime: _startTime,
+                      endTime: _endTime,
+                      location: _location,
+                      horseId: _horse.id!, // 修正箇所：正しくHorseのidを渡す
+                    );
 
-                  // メイン画面へ戻る
-                  Navigator.popUntil(context, ModalRoute.withName('/'));
-                },
-                child: const Text('保存'),
+                    await Provider.of<JournalService>(context, listen: false)
+                        .addEntry(newEntry);
+
+                    Navigator.popUntil(context, ModalRoute.withName('/'));
+                  },
+                  child: const Text('保存'),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
-  }
-
-  /// 編集行として使う共通ウィジェット
-  Widget _buildEditableField(String label, String value, VoidCallback onEdit) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        // Expanded で Text が長くなっても折り返しで表示
-        Expanded(
-          child: Text(
-            '$label: $value',
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.blue),
-          onPressed: onEdit,
-        ),
-      ],
-    );
-  }
-
-  // ------------------------
-  // 以下、各種編集
-  // ------------------------
-
-  /// スタイルを編集する例
-  void _editStyle() async {
-    final newStyle = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        String tempStyle = _style;
-        return AlertDialog(
-          title: const Text('スタイルを編集'),
-          content: TextField(
-            onChanged: (value) => tempStyle = value,
-            controller: TextEditingController(text: _style),
-            decoration: const InputDecoration(labelText: 'スタイル'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, null), // キャンセル
-              child: const Text('キャンセル'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, tempStyle), // OK
-              child: const Text('保存'),
-            ),
-          ],
-        );
-      },
-    );
-    // ユーザーが何か入力して保存した場合に値を更新
-    if (newStyle != null && newStyle.isNotEmpty) {
-      setState(() {
-        _style = newStyle;
-      });
-    }
-  }
-
-  /// 馬を編集する例
-  void _editHorse() async {
-    final newHorse = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        String tempHorse = _horse;
-        return AlertDialog(
-          title: const Text('馬を編集'),
-          content: TextField(
-            onChanged: (value) => tempHorse = value,
-            controller: TextEditingController(text: _horse),
-            decoration: const InputDecoration(labelText: '馬'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, null),
-              child: const Text('キャンセル'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, tempHorse),
-              child: const Text('保存'),
-            ),
-          ],
-        );
-      },
-    );
-    if (newHorse != null && newHorse.isNotEmpty) {
-      setState(() {
-        _horse = newHorse;
-      });
-    }
-  }
-
-  /// 場所を編集する例
-  void _editLocation() async {
-    final newLocation = await showDialog<String>(
-      context: context,
-      builder: (context) {
-        String tempLocation = _location;
-        return AlertDialog(
-          title: const Text('場所を編集'),
-          content: TextField(
-            onChanged: (value) => tempLocation = value,
-            controller: TextEditingController(text: _location),
-            decoration: const InputDecoration(labelText: '場所'),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, null),
-              child: const Text('キャンセル'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, tempLocation),
-              child: const Text('保存'),
-            ),
-          ],
-        );
-      },
-    );
-    if (newLocation != null && newLocation.isNotEmpty) {
-      setState(() {
-        _location = newLocation;
-      });
-    }
-  }
-
-  /// 開始時間の編集例 (DatePicker + TimePicker)
-  void _editStartTime() async {
-    // 日付の選択
-    final selectedDate = await showDatePicker(
-      context: context,
-      initialDate: _startTime,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-    if (selectedDate == null) return; // キャンセル
-
-    // 時間の選択
-    final selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_startTime),
-    );
-    if (selectedTime == null) return;
-
-    final newDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
-    setState(() {
-      _startTime = newDateTime;
-    });
-  }
-
-  /// 終了時間の編集例
-  void _editEndTime() async {
-    // 日付の選択
-    final selectedDate = await showDatePicker(
-      context: context,
-      initialDate: _endTime,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-    if (selectedDate == null) return; // キャンセル
-
-    // 時間の選択
-    final selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.fromDateTime(_endTime),
-    );
-    if (selectedTime == null) return;
-
-    final newDateTime = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime.hour,
-      selectedTime.minute,
-    );
-    setState(() {
-      _endTime = newDateTime;
-    });
-  }
-
-  String _formatDateTime(DateTime dateTime) {
-    return DateFormat('yyyy年MM月dd日HH時mm分').format(dateTime);
   }
 }

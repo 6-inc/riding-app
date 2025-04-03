@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:riding_app/views/journal/journal_timer_page.dart';
+import 'package:riding_app/widget/app_bar.dart';
 
 class JournalStyleSelectionPage extends StatelessWidget {
   final Function(String) onStyleSelected;
 
-  JournalStyleSelectionPage({required this.onStyleSelected});
+  const JournalStyleSelectionPage({super.key, required this.onStyleSelected});
 
   @override
   Widget build(BuildContext context) {
@@ -22,29 +23,51 @@ class JournalStyleSelectionPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(title: Text('乗馬スタイルを選択')),
-      body: ListView.builder(
-        itemCount: styles.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(styles[index]),
-            onTap: () {
-              final selectedStyle = styles[index];
-              onStyleSelected(selectedStyle);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => JournalTimerPage(
-                    style: selectedStyle,
-                    onTimeSelected: (start, end) {
-                      // 時間選択後の処理
-                    },
-                  ),
+      appBar: const CustomAppBar(title: '乗馬スタイルを選択'),
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView.separated(
+          itemCount: styles.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 12),
+          itemBuilder: (context, index) {
+            final style = styles[index];
+            return Card(
+              color: Theme.of(context).colorScheme.surfaceVariant,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 4,
+              child: ListTile(
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                title: Text(
+                  style,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
-              );
-            },
-          );
-        },
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 16,
+                ),
+                onTap: () {
+                  onStyleSelected(style);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => JournalTimerPage(
+                        style: style,
+                        onTimeSelected: (start, end) {
+                          // 時間選択後の処理
+                        },
+                      ),
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ),
     );
   }

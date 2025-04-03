@@ -3,12 +3,13 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:riding_app/database_helper.dart';
-import 'package:riding_app/widget/grid_lines.dart';
+// import 'package:riding_app/widget/grid_lines.dart';
 import 'package:riding_app/views/journal/journal_list_page.dart';
 import 'package:riding_app/widget/app_bar.dart';
 import 'package:riding_app/views/horse/horse_list_page.dart';
 import 'package:riding_app/services/horse_service.dart';
 import 'package:riding_app/services/journal_service.dart';
+import 'package:model_viewer_plus/model_viewer_plus.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -52,11 +53,16 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              GridLines(children: [
-                Text('1'),
-                Text('2'),
-                Text('3'),
-              ]),
+              const SizedBox(
+                height: 300,
+                child: ModelViewer(
+                  src: 'assets/models/horse.glb',
+                  alt: 'A 3D model of an astronaut',
+                  ar: false,
+                  autoRotate: true,
+                  disableZoom: true,
+                ),
+              ),
               ElevatedButton(
                 onPressed: () async {
                   await Provider.of<DatabaseHelper>(context, listen: false)
@@ -70,16 +76,16 @@ class _MyHomePageWidgetState extends State<MyHomePage> {
                   await Provider.of<JournalService>(context, listen: false)
                       .reloadEntries();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('データベースがリセットされました。')),
+                    const SnackBar(content: Text('データがリセットされました。')),
                   );
                 },
-                child: Text('データベースをリセット'),
+                child: const Text('データをリセット'),
               ),
             ],
           ),
         ),
       ),
-      JournalListPage(),
+      const JournalListPage(),
       HorseListPage(),
     ];
 

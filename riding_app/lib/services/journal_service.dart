@@ -14,29 +14,35 @@ class JournalService extends ChangeNotifier {
     final entryMaps = await _dbHelper.getJournalEntries();
     _entries = entryMaps
         .map((map) => JournalEntry(
+              id: map['id'],
               title: map['title'],
               content: map['content'],
               style: map['style'],
+              date: DateTime.parse(map['date']),
               startTime: DateTime.parse(map['startTime']),
               endTime: DateTime.parse(map['endTime']),
               location: map['location'],
-              horse: map['horse'],
+              horseId: map['horseId'],
             ))
         .toList();
     notifyListeners();
   }
 
   Future<void> addEntry(JournalEntry entry) async {
-    _entries.add(entry);
-    await _dbHelper.insertJournalEntry({
+    // DBに登録し、新規発行されたIDを取得する
+    final newId = await _dbHelper.insertJournalEntry({
       'title': entry.title,
       'content': entry.content,
       'style': entry.style,
-      'horse': entry.horse,
-      'location': entry.location,
+      'date': entry.date.toIso8601String(),
       'startTime': entry.startTime.toIso8601String(),
       'endTime': entry.endTime.toIso8601String(),
+      'location': entry.location,
+      'horseId': entry.horseId,
     });
+    // 新規IDをエントリーに設定
+    entry.id = newId;
+    _entries.add(entry);
     notifyListeners();
   }
 
@@ -51,5 +57,25 @@ class JournalService extends ChangeNotifier {
 
   Future<void> reloadEntries() async {
     await _loadEntriesFromDatabase();
+  }
+
+  Future<void> updateEntry(JournalEntry entry) async {
+    if (entry.id == null) {
+      throw ArgumentError(
+          'Journal Entry ID cannot be null for update operation');
+    }
+    await _dbHelper.updateJournalEntry({
+      'id': entry.id,
+      'title': entry.title,
+      'content': entry.content,
+      'style': entry.style,
+      'date': entry.date.toIso8601String(),
+      'startTime': entry.startTime.toIso8601String(),
+      'endTime': entry.endTime.toIso8601String(),
+      'location': entry.location,
+      'horseId': entry.horseId,
+    });
+    await _loadEntriesFromDatabase();
+    notifyListeners();
   }
 }
